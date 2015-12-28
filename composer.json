@@ -1,0 +1,23 @@
+{
+    "name": "kregel/dispatch",
+    "description": "",
+    "authors": [
+        {
+            "name": "Austin Kregel",
+            "email": "me@austinkregel.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "5.1.*",
+        "kregel/warden":"dev-vue-master",
+        "kregel/formmodel": "dev-vue-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kregel\\Dispatch\\": "src/Dispatch"
+        }
+    },
+    "minimum-stability": "stable"
+}
+

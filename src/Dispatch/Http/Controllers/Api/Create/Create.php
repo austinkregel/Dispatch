@@ -12,14 +12,27 @@ class Create extends Controller
         if (empty($models)) {
             return response()->json([
                 'message' => 'Either the config is missing or misnamed, please fix this and try again',
-                'code' => 442,
+                'code' => 422,
             ], 422);
         }
         if (!array_key_exists($model, $models)) {
             return response()->json(['message' => 'That model doesn\'t exist!', 'code' => 422], 422);
         }
         $model = $models[$model]['model'];
+		$model = new $model;
+		$model->fill(request()->all());
+		if($model->save())
+			return response()->json([
+				'message' => 'Your model has been saved!',
+				'code' => request()->ajax() ? 202 : 200
+			], request()->ajax() ? 202 : 200);
 
-        return $model::create(request()->all());
+		return response()->json([
+			'message' => 'We could not save that model.',
+			'code' => 422
+		], 422);
     }
 }
+
+
+

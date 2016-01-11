@@ -11,16 +11,15 @@ class Comments extends Model
 
 	protected $fillable = [
 		'body',
-		'post_date',
 		'user_id',
-		'ticket_id'
+		'ticket_id',
 	];
 
-	protected $table = 'dispatch_jurisdiction';
+	protected $table = 'dispatch_ticket_comments';
 
-	public function users()
+	public function user()
 	{
-		return $this->belongsToMany(\App\Models\User::class, 'dispatch_jurisdiction_user', 'user_id', 'jurisdiction_id');
+		return $this->belongsTo(\App\Models\User::class);
 	}
 
 	public function tickets()

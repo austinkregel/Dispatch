@@ -9,12 +9,10 @@ use Kregel\Dispatch\Models\Comments;
 class Ticket extends Model
 {
 
-	use Wardenable;
-
 	protected $fillable = [
 		'title',
 		'body',
-		'priority',
+		'priority_id',
 		'owner_id',
 		'jurisdiction_id',
 		'closer_id',
@@ -28,28 +26,29 @@ class Ticket extends Model
 		return $this->belongsTo(config('auth.model'));
 	}
 
-
 	public function closer()
 	{
 		return $this->belongsTo(config('auth.model'));
 	}
 
 
-	public function assignedTo()
+	public function assigned_to()
 	{
-		return $this->hasMany(config('auth.model'));
+		return $this->belongsToMany(config('auth.model'), 'dispatch_ticket_user');
 	}
-
 
 	public function jurisdiction()
 	{
 		return $this->belongsTo(Jurisdiction::class);
 	}
 
-
 	public function comments()
 	{
-		return $this->hasMany();
+		return $this->hasMany(Comments::class);
 	}
 
+	public function priority()
+	{
+		return $this->belongsTo(Priority::class);
+	}
 }

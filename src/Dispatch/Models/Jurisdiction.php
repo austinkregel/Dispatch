@@ -10,7 +10,7 @@ class Jurisdiction extends Model
     use Wardenable;
 
     protected $warden = [
-        'name' => 'company_name',
+        'name' => 'name',
         'phone_number' => 'phone',
     ];
 

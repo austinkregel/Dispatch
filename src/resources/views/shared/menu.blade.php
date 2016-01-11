@@ -1,5 +1,5 @@
 <div class="panel panel-default panel-flush">
-    <div class="panel-heading" style="text-transform:none;">
+    <div class="panel-heading @if(config('app.debug')) themer--secondary @endif" style="text-transform:none;">
         Did something happen? File a ticket!
     </div>
     <div class="spark-panel-body panel-body">
@@ -13,7 +13,7 @@
                         <!-- Settings Dropdown -->
                 <!-- Authenticated Right Dropdown -->
                 <li class="dropdown">
-                    <a href="#" class="dropdown-button" data-activates="side-bar-menu-{{ $i }}" >
+                    <a href="#" class="dropdown-button @if(config('app.debug')) themer--secondary @endif" data-activates="side-bar-menu-{{ $i }}" >
                         {{ ucwords($menuitem) }} <i class="material-icons right">arrow_drop_down</i>
                     </a>
                     <?php
@@ -23,12 +23,17 @@
                             <a href="'.route('dispatch::new.'.$menuitem).'" class="p-link">
                                 <i class="fa fa-btn fa-fw fa-cog"></i>New '.ucwords($menuitem).'
                             </a>
-                        </li>' : '').'
-                        <li>
-                            <a href="'.route('dispatch::view.'.$menuitem).'" class="p-link">
-                                <i class="fa fa-btn fa-fw fa-cog"></i>List '.(Auth::user()->isAdmin() ? 'all ' : 'my ').ucwords($menuitem).'s
-                            </a>
-                        </li>
+                        </li>' : '') ;
+
+					$jurisdictions = Auth::user()->jurisdiction;
+					foreach($jurisdictions as $jur){
+						$dropdown .= '<li>
+                            <a href="'.route('dispatch::view.'.$menuitem, [str_slug($jur->name)]).'" class="p-link">
+                                <i class="fa fa-btn fa-fw fa-cog"></i>New '.$jur->name.(!$jur->tickets->isEmpty()?' <span class="badge left" style="color:white;">'.$jur->tickets->count().'</span>':'').'
+							</a>
+                        </li>';
+					}
+					$dropdown .= '
                     </ul>';
                     ++$i;
                     ?>

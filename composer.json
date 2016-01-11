@@ -10,8 +10,9 @@
     "require": {
         "php": ">=5.4.0",
         "illuminate/support": "5.1.*",
-        "kregel/warden":"dev-vue-master",
-        "kregel/formmodel": "dev-vue-master"
+        "kregel/warden":"dev-master",
+        "kregel/formmodel": "^2.0",
+        "guzzlehttp/guzzle": "~5.3|~6.0"
     },
     "autoload": {
         "psr-4": {

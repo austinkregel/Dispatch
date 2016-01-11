@@ -2,6 +2,7 @@
 
 namespace Kregel\Dispatch;
 
+use Kregel\Dispatch\Commands\CheckTickets;
 use Illuminate\Support\ServiceProvider;
 use Kregel\Dispatch\Models\Jurisdiction;
 use App\Models\Roles\Permission;
@@ -20,13 +21,29 @@ class Dispatch extends ServiceProvider
      */
     public function register()
     {
-    }
+		// Register some commands here...
+		$this->app->singleton('command.dispatch.check.tickets', function($app) {
+			return new CheckTickets;
+		});
+		$this->commands('command.dispatch.check.tickets');
+		// Register some commands here...
+		$this->app->singleton('command.dispatch.check.jurisdiction', function($app) {
+			return new CheckTickets;
+		});
+		$this->commands('command.dispatch.check.jurisdiction');
+		// Register some commands here...
+		$this->app->singleton('command.dispatch.email.tickets', function($app) {
+			return new CheckTickets;
+		});
+		$this->commands('command.dispatch.email.tickets');
+	}
 
     /**
      * Preform booting of services...
      */
     public function boot()
     {
+
         if (!$this->app->routesAreCached()) {
             $this->app->router->group(['namespace' => 'Kregel\Dispatch\Http\Controllers'], function ($router) {
                 require __DIR__.'/Http/routes.php';
@@ -68,6 +85,10 @@ class Dispatch extends ServiceProvider
      */
     public function provides()
     {
-        return [];
+        return [
+			'command.dispatch.check.tickets',
+			'command.dispatch.check.jurisdiction',
+			'command.dispatch.email.tickets'
+		];
     }
 }

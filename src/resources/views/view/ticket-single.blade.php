@@ -1,72 +1,4 @@
 @extends(config('kregel.dispatch.view-base'))
-@section('scripts')
-    <script>
-        setTimeout(function () {
-            {{--var search = $('.make-comment input[name=comment]');--}}
-                    {{--search.focus(function(e) {--}}
-                    {{--var parent =       $(e.target).parent().parent().parent();--}}
-
-                    {{--parent.css({--}}
-                    {{--margin:'0 12px',--}}
-                    {{--boxShadow:'0 12px 15px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19)'--}}
-                    {{--});--}}
-                    {{--if(!parent.hasClass('z-depth-4'))--}}
-                    {{--parent.addClass('z-depth-4')--}}
-
-                    {{--});--}}
-                    {{--search.blur(function(e) {--}}
-                    {{--var parent =       $(e.target).parent().parent().parent();--}}
-                    {{--parent.css({--}}
-                    {{--margin:'0 24px',--}}
-                    {{--boxShadow:'0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12)'--}}
-                    {{--})--}}
-                    {{--});--}}
-                    {{--$('.ticket-comment').on('submit', function(e) {--}}
-                    {{--e.preventDefault();--}}
-                    {{--var Form = this;--}}
-
-                    {{--var form = $(e.target),--}}
-                    {{--action = e.target.action,--}}
-                    {{--method = e.target.method;--}}
-                    {{--//Save Form Data........--}}
-                    {{--$.ajax({--}}
-                    {{--cache: false,--}}
-                    {{--url : action,--}}
-                    {{--type: "POST",--}}
-                    {{--dataType : "json",--}}
-                    {{--headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },--}}
-                    {{--data : form.serializeObject(),--}}
-                    {{--context : Form,--}}
-                    {{--success : function(callback){--}}
-                    {{--//Where $(this) => context == FORM--}}
-                    {{--$(this).parent().find('.response').html('success!');--}}
-                    {{--$(this).val('');--}}
-                    {{--},--}}
-                    {{--error : function(){--}}
-                    {{--$(this).parent().find('.response').html('<span>failure!</span>');--}}
-                    {{--}--}}
-                    {{--});--}}
-                    {{--});--}}
-                    $.fn.serializeObject = function () {
-                var o = {};
-                var a = this.serializeArray();
-                $.each(a, function () {
-                    if (o[this.name] !== undefined) {
-                        if (!o[this.name].push) {
-                            o[this.name] = [o[this.name]];
-                        }
-                        o[this.name].push(this.value || '');
-                    } else {
-                        o[this.name] = this.value || '';
-                    }
-                });
-                return o;
-            };
-
-
-        }, 200);
-    </script>
-@endsection
 @section('content')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.11/vue.js"></script>
     <div class="container spark-screen">
@@ -82,12 +14,11 @@
                     $colors = json_decode($color);
                     $i = 0;
                     ?>
-                    @foreach($tickets as $ticket)
 
                         <?php $color = lighten('#55d2e2',
-                                ( 1 - ( $i / count($tickets) ) ));//getClosest(hexdec(dechex(floor((abs(sin(hexdec(substr($ticket->title, 0, strlen($ticket->title)/2.5)))* 16777215)) % 16777215))) , $colors);?>
-                        <li class="card">
-                            <div class="card-title collapsible-header @if(config('app.debug')) themer--secondary @endif"
+                                ( 1 - ( $i / count($ticket) ) ));//getClosest(hexdec(dechex(floor((abs(sin(hexdec(substr($ticket->title, 0, strlen($ticket->title)/2.5)))* 16777215)) % 16777215))) , $colors);?>
+                        <li class="card active">
+                            <div class="card-title active collapsible-header @if(config('app.debug')) themer--secondary @endif"
                                  style="background:#{{  $color }}">
                                 <div class="card-title-custom">
                                     {{$ticket->title}} &mdash; Priority {{ $ticket->priority->name }}
@@ -97,14 +28,14 @@
                                     <span class="badge customize">Created: {{ date('M d, Y H:i', strtotime($ticket->created_at)) }}</span>
                                     <span class="badge customize">Tentative: {{ date('M d, Y', strtotime($ticket->created_at) + (strtotime($ticket->priority->deadline) - strtotime('now'))) }}</span>
                                     @if($ticket->comments->count() > 0)
-                                        <span class="badge customize amber">{{ $ticket->comments->count() }} comments</span>
+                                    <span class="badge customize amber">{{ $ticket->comments->count() }} comments</span>
                                     @endif
                                     @if(!empty($ticket->closer->id))
-                                        <span class="badge green customize">Closed</span>
+                                    <span class="badge green customize">Closed</span>
                                     @elseif(($ticket->assigned_to->count()) > 0 )
-                                        <span class="badge red customize" style="font-style:italic;">assigned</span>
+                                    <span class="badge red customize" style="font-style:italic;">assigned</span>
                                     @elseif(empty($ticket->closer->id))
-                                        <span class="badge blue customize" style="font-style:italic;">pending</span>
+                                    <span class="badge blue customize" style="font-style:italic;">pending</span>
                                     @endif
                                 </div>
                             </div>
@@ -141,8 +72,8 @@
                                             <?php $comments = $ticket->comments()->orderBy('created_at',
                                                     'desc')->limit(5)->get()?>
                                             @foreach($comments as $comment)
-                                                <li class="card " style="border-radius:5px; ">
-                                                    <span class="card-title collapsible-header @if(config('app.debug')) themer--secondary @endif">
+                                                <li class="card active" style="border-radius:5px; ">
+                                                    <span class="card-title collapsible-header active @if(config('app.debug')) themer--secondary @endif">
                                                         {{ $comment->user->name }}
                                                         <div class="close">&times;</div>
                                                         <div style="width:calc(100% - 20px);margin-top:-15px;margin-left:-5px;">
@@ -156,7 +87,7 @@
                                                 </li>
                                                 <li style="height:1rem;width:100%;"></li>
                                             @endforeach
-                                            <li style="padding:1rem;width:100%;"><a href="{{ route('dispatch::view.ticket-single', [
+                                            <li style=""><a href="{{ route('dispatch::view.ticket-single', [
                                                 str_slug($ticket->jurisdiction->name), $ticket->id
                                             ]) }}" style="color:#333">View more replies...</a></li>
                                         @endif
@@ -174,7 +105,6 @@
                             </div>
                         </li>
                         <?php $i++;?>
-                    @endforeach
                 </ul>
             </div>
         </div>

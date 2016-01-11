@@ -84,7 +84,7 @@
                     ?>
                     @foreach($tickets as $ticket)
 
-                        <?php $color = lighten('#55d2e2',
+                        <?php $color = lighten('#'.config('kregel.dispatch.color'),
                                 ( 1 - ( $i / count($tickets) ) ));//getClosest(hexdec(dechex(floor((abs(sin(hexdec(substr($ticket->title, 0, strlen($ticket->title)/2.5)))* 16777215)) % 16777215))) , $colors);?>
                         <li class="card">
                             <div class="card-title collapsible-header @if(config('app.debug')) themer--secondary @endif"
@@ -162,11 +162,11 @@
                                         @endif
                                         <li class="card" style="background:transparent;box-shadow:none;">
 										<span class="@if(config('app.debug')) themer--secondary @endif ticket-comment">
-											<ticket-comment
+											<ticket-make-comment
                                                     :action="'{{ route('warden::api.create-model', ['comment']) }}'"
                                                     :ticket_id="'{{ $ticket->id }}'"
                                                     :user_id="'{{ Auth::user()->id }}'"
-                                                    :_token="'{{ csrf_token() }}'"></ticket-comment>
+                                                    :_token="'{{ csrf_token() }}'"></ticket-make-comment>
 										</span>
                                         </li>
                                     </ul>

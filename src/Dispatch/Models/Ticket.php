@@ -72,10 +72,9 @@ class Ticket extends Model
 	public function getDiff()
 	{
 		$changed = $this->getDirty();
-
 		$before = json_encode(array_intersect($this->fresh()->toArray(), $changed));
 		$after = json_encode($changed);
-		$hash = sha1($changed->toJson());
+		$hash = sha1($this);
 		return compact ('before', 'after', 'hash');
 	}
 }

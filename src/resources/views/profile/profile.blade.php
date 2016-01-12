@@ -119,7 +119,7 @@
                                                 ?>
                                                 @foreach($users as $user)
                                                     <a href="{{ route('dispatch::profile.user', [$user->id, str_slug($user->name)]) }}">{{ $user->name }}</a>{{ ($user_count > $i ? ', ' : '') }}
-                                                    <?php $i++; ?>
+                                                    <?php ++$i; ?>
                                                 @endforeach
                                             @endif
                                         </div>

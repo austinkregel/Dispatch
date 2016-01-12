@@ -7,23 +7,23 @@ use Kregel\Warden\Traits\Wardenable;
 
 class Comments extends Model
 {
-	use Wardenable;
+    use Wardenable;
 
-	protected $fillable = [
-		'body',
-		'user_id',
-		'ticket_id',
-	];
+    protected $fillable = [
+        'body',
+        'user_id',
+        'ticket_id',
+    ];
 
-	protected $table = 'dispatch_ticket_comments';
+    protected $table = 'dispatch_ticket_comments';
 
-	public function user()
-	{
-		return $this->belongsTo(\App\Models\User::class);
-	}
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class);
+    }
 
-	public function tickets()
-	{
-		return $this->belongsTo(Ticket::class);
-	}
+    public function tickets()
+    {
+        return $this->belongsTo(Ticket::class);
+    }
 }

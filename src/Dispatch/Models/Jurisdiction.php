@@ -12,17 +12,18 @@ class Jurisdiction extends Model
     public static function boot()
     {
         parent::boot();
-        Jurisdiction::creating(function ($jurisdiction) {
+        self::creating(function ($jurisdiction) {
             $perm = Permission::create([
                 'name' => 'view-'.str_slug($jurisdiction->name),
                 'display_name' => 'View '.$jurisdiction->name,
                 'description' => 'This permission will let the user view '.strtolower($jurisdiction->name),
             ]);
         });
-        Jurisdiction::created(function ($jurisdiction) {
+        self::created(function ($jurisdiction) {
             if (\Auth::check()) {
-                if(!\Auth::user()->jurisdiction->contains($jurisdiction->id))
+                if (!\Auth::user()->jurisdiction->contains($jurisdiction->id)) {
                     \Auth::user()->jurisdiction()->attach($jurisdiction->id);
+                }
             }
         });
     }

@@ -23,17 +23,17 @@
                             <a href="'.route('dispatch::new.'.$menuitem).'" class="p-link">
                                 <i class="fa fa-btn fa-fw fa-cog"></i>New '.ucwords($menuitem).'
                             </a>
-                        </li>' : '') ;
+                        </li>' : '');
 
-					$jurisdictions = Auth::user()->jurisdiction;
-					foreach($jurisdictions as $jur){
-						$dropdown .= '<li>
+                    $jurisdictions = Auth::user()->jurisdiction;
+                    foreach ($jurisdictions as $jur) {
+                        $dropdown .= '<li>
                             <a href="'.route('dispatch::view.'.$menuitem, [str_slug($jur->name)]).'" class="p-link">
-                                <i class="fa fa-btn fa-fw fa-cog"></i>New '.$jur->name.(!$jur->tickets->isEmpty()?' <span class="badge left" style="color:white;">'.$jur->tickets->count().'</span>':'').'
+                                <i class="fa fa-btn fa-fw fa-cog"></i>New '.$jur->name.(!$jur->tickets->isEmpty() ? ' <span class="badge left" style="color:white;">'.$jur->tickets->count().'</span>' : '').'
 							</a>
                         </li>';
-					}
-					$dropdown .= '
+                    }
+                    $dropdown .= '
                     </ul>';
                     ++$i;
                     ?>

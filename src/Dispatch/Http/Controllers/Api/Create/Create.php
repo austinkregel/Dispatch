@@ -19,20 +19,18 @@ class Create extends Controller
             return response()->json(['message' => 'That model doesn\'t exist!', 'code' => 422], 422);
         }
         $model = $models[$model]['model'];
-		$model = new $model;
-		$model->fill(request()->all());
-		if($model->save())
-			return response()->json([
-				'message' => 'Your model has been saved!',
-				'code' => request()->ajax() ? 202 : 200
-			], request()->ajax() ? 202 : 200);
+        $model = new $model();
+        $model->fill(request()->all());
+        if ($model->save()) {
+            return response()->json([
+                'message' => 'Your model has been saved!',
+                'code' => request()->ajax() ? 202 : 200,
+            ], request()->ajax() ? 202 : 200);
+        }
 
-		return response()->json([
-			'message' => 'We could not save that model.',
-			'code' => 422
-		], 422);
+        return response()->json([
+            'message' => 'We could not save that model.',
+            'code' => 422,
+        ], 422);
     }
 }
-
-
-

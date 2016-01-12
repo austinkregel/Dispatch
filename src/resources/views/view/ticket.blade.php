@@ -85,7 +85,7 @@
                     @foreach($tickets as $ticket)
 
                         <?php $color = lighten('#'.config('kregel.dispatch.color'),
-                                ( 1 - ( $i / count($tickets) ) ));//getClosest(hexdec(dechex(floor((abs(sin(hexdec(substr($ticket->title, 0, strlen($ticket->title)/2.5)))* 16777215)) % 16777215))) , $colors);?>
+                                (1 - ($i / count($tickets))));//getClosest(hexdec(dechex(floor((abs(sin(hexdec(substr($ticket->title, 0, strlen($ticket->title)/2.5)))* 16777215)) % 16777215))) , $colors);?>
                         <li class="card">
                             <div class="card-title collapsible-header @if(config('app.debug')) themer--secondary @endif"
                                  style="background:#{{  $color }}">
@@ -127,7 +127,7 @@
                                             ?>
                                             @foreach($users as $user)
                                                 <a href="{{ route('dispatch::profile.user', [$user->id, str_slug($user->name)]) }}">{{ $user->name }}</a>{{ ($user_count > $i ? ', ' : '') }}
-                                                <?php $i++; ?>
+                                                <?php ++$i; ?>
                                             @endforeach
                                         @endif
                                     </div>
@@ -173,7 +173,7 @@
                                 </div>
                             </div>
                         </li>
-                        <?php $i++;?>
+                        <?php ++$i;?>
                     @endforeach
                 </ul>
             </div>

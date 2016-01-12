@@ -5,6 +5,7 @@ namespace Kregel\Dispatch\Http\Controllers;
 use Kregel\Dispatch\Models\Jurisdiction;
 use Kregel\FormModel\FormModel;
 use Auth;
+
 class TicketsController extends Controller
 {
     protected $form;
@@ -35,6 +36,7 @@ class TicketsController extends Controller
                     'I can\'t seem to find your jurisdiction... Please contact your administrator.',
                 ]);
             }
+
             return view('dispatch::create.ticket')->with([
                 'jurisdiction' => $jurisdictions->first(),
                 'form' => $form,
@@ -51,7 +53,7 @@ class TicketsController extends Controller
     public function viewAll()
     {
         return view('dispatch::view.ticket')
-					->withJurisdictions(\auth()->user()->jurisdiction);
+                    ->withJurisdictions(\auth()->user()->jurisdiction);
     }
     public function getTicketsForJurisdiction($jurisdiction)
     {
@@ -64,6 +66,7 @@ class TicketsController extends Controller
         //grab the user's assigned tickets.
         $tickets_ = auth()->user()->assigned_tickets()->where('jurisdiction_id', $jurisdiction->id)->orderBy('created_at')->orderBy('priority_id')->get();
         $sum_tickets = $tickets->merge($tickets_)->sortBy('created_at')->sortBy('priority_id');
+
         return view('dispatch::view.ticket')->with(compact('jurisdiction'))->withTickets($sum_tickets);
     }
 
@@ -75,8 +78,7 @@ class TicketsController extends Controller
         //This line should be limited to admins+ not include contacts / maintence.
         $ticket = auth()->user()->tickets()->where('jurisdiction_id', $jurisdiction->id)->whereId($id)->first();
         $comments = $ticket->comments()->orderBy('created_at', 'desc')->get();
+
         return view('dispatch::view.ticket-single')->with(compact('jurisdiction'))->withTicket($ticket)->withComments($comments);
     }
-
-
 }

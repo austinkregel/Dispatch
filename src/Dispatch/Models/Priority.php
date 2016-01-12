@@ -7,17 +7,17 @@ use Kregel\Warden\Traits\Wardenable;
 
 class Priority extends Model
 {
-	use Wardenable;
+    use Wardenable;
 
-	protected $fillable = [
-		'name',
-		'deadline'
-	];
+    protected $fillable = [
+        'name',
+        'deadline',
+    ];
 
-	protected $table = 'dispatch_priority';
+    protected $table = 'dispatch_priority';
 
-	public function tickets()
-	{
-		return $this->hasMany(Ticket::class);
-	}
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
 }

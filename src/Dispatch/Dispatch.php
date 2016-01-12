@@ -5,7 +5,6 @@ namespace Kregel\Dispatch;
 use Kregel\Dispatch\Commands\CheckTickets;
 use Illuminate\Support\ServiceProvider;
 use Kregel\Dispatch\Models\Jurisdiction;
-use App\Models\Roles\Permission;
 use Kregel\Dispatch\Models\Ticket;
 
 class Dispatch extends ServiceProvider
@@ -22,29 +21,28 @@ class Dispatch extends ServiceProvider
      */
     public function register()
     {
-		// Register some commands here...
-		$this->app->singleton('command.dispatch.check.tickets', function($app) {
-			return new CheckTickets;
-		});
-		$this->commands('command.dispatch.check.tickets');
-		// Register some commands here...
-		$this->app->singleton('command.dispatch.check.jurisdiction', function($app) {
-			return new CheckTickets;
-		});
-		$this->commands('command.dispatch.check.jurisdiction');
-		// Register some commands here...
-		$this->app->singleton('command.dispatch.email.tickets', function($app) {
-			return new CheckTickets;
-		});
-		$this->commands('command.dispatch.email.tickets');
-	}
+        // Register some commands here...
+        $this->app->singleton('command.dispatch.check.tickets', function ($app) {
+            return new CheckTickets();
+        });
+        $this->commands('command.dispatch.check.tickets');
+        // Register some commands here...
+        $this->app->singleton('command.dispatch.check.jurisdiction', function ($app) {
+            return new CheckTickets();
+        });
+        $this->commands('command.dispatch.check.jurisdiction');
+        // Register some commands here...
+        $this->app->singleton('command.dispatch.email.tickets', function ($app) {
+            return new CheckTickets();
+        });
+        $this->commands('command.dispatch.email.tickets');
+    }
 
     /**
      * Preform booting of services...
      */
     public function boot()
     {
-
         if (!$this->app->routesAreCached()) {
             $this->app->router->group(['namespace' => 'Kregel\Dispatch\Http\Controllers'], function ($router) {
                 require __DIR__.'/Http/routes.php';
@@ -59,9 +57,7 @@ class Dispatch extends ServiceProvider
             __DIR__.'/../config/config.php' => config_path('kregel/dispatch.php'),
         ], 'config');
 
-
-
-        Ticket::updating(function($ticket){
+        Ticket::updating(function ($ticket) {
             $ticket->adjust();
         });
     }
@@ -74,9 +70,9 @@ class Dispatch extends ServiceProvider
     public function provides()
     {
         return [
-			'command.dispatch.check.tickets',
-			'command.dispatch.check.jurisdiction',
-			'command.dispatch.email.tickets'
-		];
+            'command.dispatch.check.tickets',
+            'command.dispatch.check.jurisdiction',
+            'command.dispatch.email.tickets',
+        ];
     }
 }

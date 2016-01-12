@@ -6,6 +6,7 @@ use Kregel\Dispatch\Commands\CheckTickets;
 use Illuminate\Support\ServiceProvider;
 use Kregel\Dispatch\Models\Jurisdiction;
 use App\Models\Roles\Permission;
+use Kregel\Dispatch\Models\Ticket;
 
 class Dispatch extends ServiceProvider
 {
@@ -58,23 +59,10 @@ class Dispatch extends ServiceProvider
             __DIR__.'/../config/config.php' => config_path('kregel/dispatch.php'),
         ], 'config');
 
-        Jurisdiction::creating(function ($jurisdiction) {
-            $perm = Permission::create([
-                'name' => 'view-'.str_slug($jurisdiction->name),
-                'display_name' => 'View '.$jurisdiction->name,
-                'description' => 'This permission will let the user view '.strtolower($jurisdiction->name),
-            ]);
-            if (\Auth::check()) {
-                $user_model = config('auth.model');
-                $user = $user_model::find(\Auth::user()->id);
-                $user->perms()->attach($perm->id);
-            }
-        });
-        Jurisdiction::created(function ($jurisdiction) {
-            if (\Auth::check()) {
-				if(!\Auth::user()->jurisdiction->contains($jurisdiction->id))
-					\Auth::user()->jurisdiction()->attach($jurisdiction->id);
-            }
+
+
+        Ticket::updating(function($ticket){
+            $ticket->adjust();
         });
     }
 

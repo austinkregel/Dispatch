@@ -59,7 +59,14 @@ class CreateDispatchTables extends Migration
 			$table->integer('ticket_id')->unsigned();
 			$table->timestamps(); // For when it was assigned to the user.
 		});
-
+		Schema::create('dispatch_ticket_edits', function (Blueprint $table) {
+			$table->increments('id');
+			$table->integer('user_id')->unsigned();
+			$table->integer('ticket_id')->unsigned();
+			$table->text('before');
+			$table->text('after');
+			$table->timestamps(); // For when it was assigned to the user.
+		});
 		Schema::create('dispatch_ticket_comments', function (Blueprint $table) {
 			$table->text('body');
 			$table->integer('user_id')->unsigned();

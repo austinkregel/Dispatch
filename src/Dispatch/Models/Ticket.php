@@ -2,12 +2,16 @@
 
 namespace Kregel\Dispatch\Models;
 
-use Illuminate\Database\Eloquent\Model;
+ use Illuminate\Database\Eloquent\Model;
 use Kregel\Warden\Traits\Wardenable;
 use Kregel\Dispatch\Models\Comments;
 
 class Ticket extends Model
 {
+
+	public static function boot(){
+		parent::boot();
+	}
 
 	protected $fillable = [
 		'title',
@@ -50,5 +54,28 @@ class Ticket extends Model
 	public function priority()
 	{
 		return $this->belongsTo(Priority::class);
+	}
+	public function adjustments()
+	{
+		return $this->belongsToMany(config('auth.model'), 'dispatch_ticket_edits')
+			->withTimestamps()
+			->withPivot(['before','after','hash'])
+			->latest('pivot_updated_at');
+	}
+
+	public function adjust($userId = null, $diff = null){
+		$userId = $userId ?:auth()->user()->id;
+		$diff = $diff?:$this->getDiff();
+		return $this->adjustments()->attach($userId, $diff);
+	}
+
+	public function getDiff()
+	{
+		$changed = $this->getDirty();
+
+		$before = json_encode(array_intersect($this->fresh()->toArray(), $changed));
+		$after = json_encode($changed);
+		$hash = sha1($changed->toJson());
+		return compact ('before', 'after', 'hash');
 	}
 }

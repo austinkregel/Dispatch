@@ -156,6 +156,7 @@
                                                 </li>
                                                 <li style="height:1rem;width:100%;"></li>
                                             @endforeach
+
                                             <li style="padding:1rem;width:100%;"><a href="{{ route('dispatch::view.ticket-single', [
                                                 str_slug($ticket->jurisdiction->name), $ticket->id
                                             ]) }}" style="color:#333">View more replies...</a></li>

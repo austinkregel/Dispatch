@@ -1,0 +1,11 @@
+before_script:
+  - uname -a
+  - sudo composer self-update
+  - composer install
+
+stages:
+  - test
+
+test:
+  script:
+  - php vendor/phpunit/phpunit/phpunit

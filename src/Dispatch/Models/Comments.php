@@ -15,6 +15,12 @@ class Comments extends Model
         'ticket_id',
     ];
 
+    protected $warden = [
+        'body' => 'body',
+        'user_id' => 'user_id',
+        'ticket_id' => 'ticket_id'
+    ];
+
     protected $table = 'dispatch_ticket_comments';
 
     public function user()

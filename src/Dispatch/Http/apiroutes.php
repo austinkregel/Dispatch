@@ -37,7 +37,7 @@ Route::group(['prefix' => 'update'], function () {
  * This a group for deleting (delete requests)
  * @return void
  */
-Route::group(['prefix' => 'delete'], function () {
+Route::group(['prefix' => 'delete.'], function () {
 //            Route::delete('document/{uuid}', '');
 //            Route::delete('image/{uuid}', '');
 //            Route::delete('video/{uuid}', '');

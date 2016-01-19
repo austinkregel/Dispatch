@@ -3,14 +3,11 @@
 namespace Kregel\Dispatch\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Kregel\Warden\Traits\Wardenable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Ticket extends Model
 {
-
-    use Wardenable;
-
-
+    use SoftDeletes;
     protected $fillable = [
         'title',
         'body',
@@ -22,21 +19,12 @@ class Ticket extends Model
 
     protected $table = 'dispatch_tickets';
 
+    protected $dates = ['deleted_at'];
 
     public static function boot()
     {
         parent::boot();
     }
-
-    protected $warden = [
-        'title' => 'title',
-        'body' => 'body',
-        'priority_id' => 'priority',
-        'owner_id' => 'owner',
-        'jurisdiction_id' => 'jurisdiction',
-        'closer_id' => 'closer',
-    ];
-
 
     public function owner()
     {

@@ -3,17 +3,18 @@
 namespace Kregel\Dispatch\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Kregel\Warden\Traits\Wardenable;
 
 class Jurisdiction extends Model
 {
     use Wardenable;
-
     public static function boot()
     {
         parent::boot();
         self::creating(function ($jurisdiction) {
-            $perm = Permission::create([
+            $perm = config('entrust.permission');
+            $perm = $perm::create([
                 'name' => 'view-'.str_slug($jurisdiction->name),
                 'display_name' => 'View '.$jurisdiction->name,
                 'description' => 'This permission will let the user view '.strtolower($jurisdiction->name),

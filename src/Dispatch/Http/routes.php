@@ -11,7 +11,7 @@ Route::group(['prefix' => config('kregel.dispatch.route'), 'as' => 'dispatch::',
     Route::get('/', function () {
         return view('dispatch::home');
     });
-    Route::group(['as' => 'new.'], function () {
+    Route::group(['as' => 'new.', 'prefix' => 'new'], function () {
         Route::get('ticket', ['as' => 'ticket', 'uses' => 'TicketsController@create']);
         Route::get('jurisdiction/{place?}', ['as' => 'jurisdiction', 'uses' => 'JurisdictionController@create']);
     });
@@ -19,6 +19,8 @@ Route::group(['prefix' => config('kregel.dispatch.route'), 'as' => 'dispatch::',
         Route::get('tickets', ['as' => 'tickets', 'uses' => 'TicketsController@viewAll']);
         Route::get('ticket/{name}', ['as' => 'ticket', 'uses' => 'TicketsController@getTicketsForJurisdiction']);
         Route::get('ticket/{name}/{id}', ['as' => 'ticket-single', 'uses' => 'TicketsController@getTicketFromJurisdiction']);
+        Route::get('ticket/{name}/{id}/edit', ['as' => 'edit-ticket', 'uses' => 'TicketsController@getTicketFromJurisdictionForEdit']);
+
         Route::get('jurisdictions', ['as' => 'jurisdiction', 'uses' => 'JurisdictionController@viewAll']);
     });
     Route::group(['as' => 'profile.', 'prefix' => config('kregel.auth-login.profile.route')], function () {

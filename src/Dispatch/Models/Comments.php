@@ -3,23 +3,18 @@
 namespace Kregel\Dispatch\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Kregel\Warden\Traits\Wardenable;
 
 class Comments extends Model
 {
-    use Wardenable;
-
+    use SoftDeletes;
     protected $fillable = [
         'body',
         'user_id',
         'ticket_id',
     ];
-
-    protected $warden = [
-        'body' => 'body',
-        'user_id' => 'user_id',
-        'ticket_id' => 'ticket_id'
-    ];
+    protected $dates = ['deleted_at'];
 
     protected $table = 'dispatch_ticket_comments';
 

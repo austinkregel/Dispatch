@@ -91,7 +91,8 @@
                                  style="background:#{{  $color }}">
                                 <div class="card-title-custom">
                                     {{$ticket->title}} &mdash; Priority {{ $ticket->priority->name }}
-                                    <div class="close" style="padding: 8px;">&times;</div>
+                                    <div class="ticket-action close-ticket"><i class="fa fa-times"></i></div>
+                                    <div class="ticket-action edit-ticket"><i class="fa fa-pencil"></i></div>
                                 </div>
                                 <div style="width:calc(100% - 20px); margin:10px;line-height:2rem;">
                                     <span class="badge customize">Created: {{ date('M d, Y H:i', strtotime($ticket->created_at)) }}</span>
@@ -141,13 +142,13 @@
                                             <?php $comments = $ticket->comments()->orderBy('created_at',
                                                     'desc')->limit(5)->get()?>
                                             @foreach($comments as $comment)
-                                                <li class="card " style="border-radius:5px; ">
+                                                <li class="card ">
                                                     <span class="card-title collapsible-header @if(config('app.debug')) themer--secondary @endif">
                                                         {{ $comment->user->name }}
-                                                        <div class="close">&times;</div>
+                                                        <div class="ticket-action close-ticket"><i class="fa fa-times"></i></div>
+                                                        <div class="ticket-action edit-ticket"><i class="fa fa-pencil"></i></div>
                                                         <div style="width:calc(100% - 20px);margin-top:-15px;margin-left:-5px;">
                                                             <span class="badge customize">Created: {{ date('M d, Y H:i', strtotime($comment->created_at)) . ' '. $comment->id }}</span>
-
                                                         </div>
                                                     </span>
                                                     <div class="collapsible-body @if(config('app.debug')) themer--accent-2 @endif">
@@ -157,20 +158,19 @@
                                                 <li style="height:1rem;width:100%;"></li>
                                             @endforeach
 
-                                            <li style="padding:1rem;width:100%;"><a href="{{ route('dispatch::view.ticket-single', [
-                                                str_slug($ticket->jurisdiction->name), $ticket->id
-                                            ]) }}" style="color:#333">View more replies...</a></li>
                                         @endif
-                                        <li class="card" style="background:transparent;box-shadow:none;">
-										<span class="@if(config('app.debug')) themer--secondary @endif ticket-comment">
-											<ticket-make-comment
-                                                    :action="'{{ route('warden::api.create-model', ['comment']) }}'"
-                                                    :ticket_id="'{{ $ticket->id }}'"
-                                                    :user_id="'{{ Auth::user()->id }}'"
-                                                    :_token="'{{ csrf_token() }}'"></ticket-make-comment>
-										</span>
-                                        </li>
+
                                     </ul>
+                                    <div style="padding:1rem;width:100%;"><a href="{{ route('dispatch::view.ticket-single', [
+                                        str_slug($ticket->jurisdiction->name), $ticket->id
+                                    ]) }}" style="color:#333">View more replies...</a></div>
+                                    <span class="@if(config('app.debug')) themer--secondary @endif ticket-comment">
+                                        <ticket-make-comment
+                                                :action="'{{ route('warden::api.create-model', ['comment']) }}'"
+                                                :ticket_id="'{{ $ticket->id }}'"
+                                                :user_id="'{{ Auth::user()->id }}'"
+                                                :_token="'{{ csrf_token() }}'"></ticket-make-comment>
+                                    </span>
                                 </div>
                             </div>
                         </li>

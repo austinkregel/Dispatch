@@ -5,6 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateDispatchTables extends Migration
 {
+
     /**
      * Run the migrations.
      */
@@ -37,6 +38,7 @@ class CreateDispatchTables extends Migration
             $table->increments('id');
             $table->text('name');
             $table->string('phone_number');
+
             $table->timestamps();
         });
 
@@ -51,6 +53,7 @@ class CreateDispatchTables extends Migration
             $table->integer('user_id')->unsigned();
             $table->integer('jurisdiction_id')->unsigned();
             $table->timestamps();
+            $table->primary([ 'user_id', 'jurisdiction_id' ]);
         });
 
         Schema::create('dispatch_ticket_user', function (Blueprint $table) {
@@ -64,12 +67,14 @@ class CreateDispatchTables extends Migration
             $table->integer('ticket_id')->unsigned();
             $table->text('before');
             $table->text('after');
+            $table->string('hash');
             $table->timestamps(); // For when it was assigned to the user.
         });
         Schema::create('dispatch_ticket_comments', function (Blueprint $table) {
             $table->text('body');
             $table->integer('user_id')->unsigned();
             $table->integer('ticket_id')->unsigned();
+            $table->softDeletes();
             $table->timestamps(); // For when it was assigned to the user.
         });
 
@@ -86,6 +91,7 @@ class CreateDispatchTables extends Migration
         });
     }
 
+
     /**
      * Reverse the migrations.
      */
@@ -96,6 +102,7 @@ class CreateDispatchTables extends Migration
         Schema::drop('dispatch_priority');
         Schema::drop('dispatch_ticket_user');
         Schema::drop('dispatch_tickets');
+        Schema::drop('dispatch_ticket_edits');
         Schema::drop('dispatch_ticket_media');
         Schema::drop('dispatch_ticket_comments');
     }

@@ -1,6 +1,5 @@
 @extends(config('kregel.dispatch.view-base'))
 @section('content')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.11/vue.js"></script>
 
     <div class="container spark-screen">
         <div class="row">
@@ -14,17 +13,18 @@
                     </div>
                     <div class="panel-body">
                         @include('dispatch::shared.errors')
-                        {!! $form !!}
+                        @include('formmodel::form_types.bootstrap-vue', ['components'=> $form->vue_components, 'type' => $form->options['method']])
+
                     </div>
                 </div>
             </div>
         </div>
 		<script>
 //			jQuery('#jurisdiction_id').change(function(){ vm.$set('select', jQuery('#jurisdiction_id').val()); console.log('changed');});
-			var jursdiction = document.querySelector('#jurisdiction_id');
-			jursdiction.onchange = function(){
-				vm.$data.data.jurisdiction_id = jursdiction.options[jursdiction.selectedIndex].value;
-			}
+//			var jursdiction = document.querySelector('#jurisdiction_id');
+//			jursdiction.onchange = function(){
+//				vm.$data.data.jurisdiction_id = jursdiction.options[jursdiction.selectedIndex].value;
+//			}
 		</script>
     </div>
 @endsection

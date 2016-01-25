@@ -2,52 +2,7 @@
 @section('scripts')
     <script>
         setTimeout(function () {
-            {{--var search = $('.make-comment input[name=comment]');--}}
-                    {{--search.focus(function(e) {--}}
-                    {{--var parent =       $(e.target).parent().parent().parent();--}}
-
-                    {{--parent.css({--}}
-                    {{--margin:'0 12px',--}}
-                    {{--boxShadow:'0 12px 15px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19)'--}}
-                    {{--});--}}
-                    {{--if(!parent.hasClass('z-depth-4'))--}}
-                    {{--parent.addClass('z-depth-4')--}}
-
-                    {{--});--}}
-                    {{--search.blur(function(e) {--}}
-                    {{--var parent =       $(e.target).parent().parent().parent();--}}
-                    {{--parent.css({--}}
-                    {{--margin:'0 24px',--}}
-                    {{--boxShadow:'0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12)'--}}
-                    {{--})--}}
-                    {{--});--}}
-                    {{--$('.ticket-comment').on('submit', function(e) {--}}
-                    {{--e.preventDefault();--}}
-                    {{--var Form = this;--}}
-
-                    {{--var form = $(e.target),--}}
-                    {{--action = e.target.action,--}}
-                    {{--method = e.target.method;--}}
-                    {{--//Save Form Data........--}}
-                    {{--$.ajax({--}}
-                    {{--cache: false,--}}
-                    {{--url : action,--}}
-                    {{--type: "POST",--}}
-                    {{--dataType : "json",--}}
-                    {{--headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },--}}
-                    {{--data : form.serializeObject(),--}}
-                    {{--context : Form,--}}
-                    {{--success : function(callback){--}}
-                    {{--//Where $(this) => context == FORM--}}
-                    {{--$(this).parent().find('.response').html('success!');--}}
-                    {{--$(this).val('');--}}
-                    {{--},--}}
-                    {{--error : function(){--}}
-                    {{--$(this).parent().find('.response').html('<span>failure!</span>');--}}
-                    {{--}--}}
-                    {{--});--}}
-                    {{--});--}}
-                    $.fn.serializeObject = function () {
+            $.fn.serializeObject = function () {
                 var o = {};
                 var a = this.serializeArray();
                 $.each(a, function () {
@@ -62,13 +17,10 @@
                 });
                 return o;
             };
-
-
-        }, 200);
+        }, 500);
     </script>
 @endsection
 @section('content')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.11/vue.js"></script>
     <div class="container spark-screen">
         <div class="row">
             <div class="col-md-4">
@@ -91,8 +43,16 @@
                                  style="background:#{{  $color }}">
                                 <div class="card-title-custom">
                                     {{$ticket->title}} &mdash; Priority {{ $ticket->priority->name }}
-                                    <div class="ticket-action close-ticket"><i class="fa fa-times"></i></div>
-                                    <div class="ticket-action edit-ticket"><i class="fa fa-pencil"></i></div>
+                                    <div class="ticket-action close-ticket">
+                                        <a href="{{ route('dispatch::view.edit-ticket', [str_slug($ticket->jurisdiction->name), $ticket->id]) }}">
+                                            <i class="fa fa-times"></i>
+                                        </a>
+                                    </div>
+                                    <div class="ticket-action edit-ticket">
+                                        <a href="{{ route('dispatch::view.edit-ticket', [str_slug($ticket->jurisdiction->name), $ticket->id]) }}">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                    </div>
                                 </div>
                                 <div style="width:calc(100% - 20px); margin:10px;line-height:2rem;">
                                     <span class="badge customize">Created: {{ date('M d, Y H:i', strtotime($ticket->created_at)) }}</span>
@@ -179,4 +139,5 @@
                 </ul>
             </div>
         </div>
+
 @endsection

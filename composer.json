@@ -13,6 +13,8 @@
         "kregel/warden":"dev-master",
         "kregel/formmodel": "dev-master",
         "kregel/menu": "dev-master",
+        "zizaco/entrust": "dev-laravel-5",
+        "acoustep/entrust-gui": "dev-master",
         "phpunit/phpunit": "~4.0"
     },
     "autoload": {

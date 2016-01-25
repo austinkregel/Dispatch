@@ -60,7 +60,13 @@ class Dispatch extends ServiceProvider
         Ticket::updating(function ($ticket) {
             $ticket->adjust();
         });
+        Ticket::created(function($ticket){
+            // We need to update the owner of the ticket,
+            // Those who are assigned to it, and those
+            // who commented on it of the new ticket
+        });
     }
+
 
     /**
      * Get the services provided by the provider.

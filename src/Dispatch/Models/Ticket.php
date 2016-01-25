@@ -4,10 +4,12 @@ namespace Kregel\Dispatch\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Kregel\Warden\Traits\Wardenable;
 
 class Ticket extends Model
 {
-    use SoftDeletes;
+
+    use SoftDeletes, Wardenable;
     protected $fillable = [
         'title',
         'body',
@@ -20,11 +22,9 @@ class Ticket extends Model
     protected $table = 'dispatch_tickets';
 
     protected $dates = ['deleted_at'];
-
-    public static function boot()
-    {
-        parent::boot();
-    }
+    protected $hidden = [
+        'owner_id', 'closer_id'
+    ];
 
     public function owner()
     {
@@ -90,4 +90,5 @@ class Ticket extends Model
                 'hash'
             ])->latest('pivot_updated_at');
     }
+
 }

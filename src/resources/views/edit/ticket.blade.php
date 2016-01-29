@@ -9,12 +9,7 @@
             <div class="col-md-8">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        @if(!empty($jurisdiction))
-                            File a ticket for {{ $jurisdiction->name }}
-                        @else
-                            File a ticket
-                        @endif
-
+                        Edit the ticket for {{ $jurisdiction->name }}
                     </div>
                     <div class="panel-body">
                         @include('dispatch::shared.errors')
@@ -23,39 +18,36 @@
                                 @{{ response }}
                                 <div class="close" @click="close">&times;</div>
                         </div>
-                        
                         <form @submit.prevent="makeRequest" method="POST" enctype="multipart/form-data"
                               action="http://theateradmin.dev/warden/api/v1.0/ticket">
-                            <div class="form-group">
-                                <input class="form-control" id="_method" type="hidden" name="_method" value="post">
+                            <div class="input-field">
+                                <input class="validate" id="_method" type="hidden" name="_method" value="put">
                             </div>
 
                             {!! csrf_field() !!}
 
-                            <div class="form-group">
+                            <div class="input-field">
+                                <textarea class="materialize-textarea" id="title" type="text" name="title"
+                                          v-model="data.title" value="{{ $ticket->title }}"></textarea>
                                 <label for="title">Title</label>
-
-                                <textarea class="form-control" cols="3" id="title" type="text" name="title"
-                                          v-model="data.title"></textarea>
                             </div>
-                            <div class="form-group">
+                            <div class="input-field">
+                                <textarea class="materialize-textarea" id="body" type="text" name="body"
+                                          v-model="data.body"  value="{{ $ticket->body }}"></textarea>
                                 <label for="body">Body</label>
-
-                                <textarea class="form-control" cols="3" id="body" type="text" name="body"
-                                          v-model="data.body"></textarea>
                             </div>
-                            <div class="form-group">
+                            <div class="input-field">
                                 <select id="priority_id" default="" type="select" name="priority_id"
-                                        v-model="data.priority_id" @update="updateSelect" class="form-control">
+                                        v-model="data.priority_id" @update="updateSelect">
                                 <option value="" disabled selected>Please select a priority to assign this to</option>
                                 @foreach(\Kregel\Dispatch\Models\Priority::all() as $priority)
-                                    <option value="{{ $priority->id }}">{{ $priority->name }}</option>
+                                    <option value="{{ $priority->id }}" @if($ticket->priority->name === $priority->name) selected@endif>{{ $priority->name }}</option>
                                 @endforeach
                                 </select>
 
                             </div>
                             @if(empty($jurisdiction))
-                                <div class="form-group">
+                                <div class="input-field">
                                     <select multiple id="jurisdiction">
                                         <option value="" disabled selected>Please assign this to a location</option>
                                         @foreach(auth()->user()->jurisdiction as $jurisdiction)
@@ -66,20 +58,21 @@
                                 </div>
                             @endif
                             @if(auth()->user()->can_assign())
-                            <div class="form-group">
-                                <select multiple id="assign_to" class="form-control">
+                            <div class="input-field">
+                                <select multiple id="assign_to">
                                     <option value="" disabled selected>Please assign a user or two</option>
                                     @foreach($jurisdiction->users as $user)
                                         <option value="{{ $user->id }}">{{ $user->name }}</option>
                                     @endforeach
+
                                 </select>
                             </div>
 
 
                             @endif
-                            <div class="form-group">
-                                <div class="form-group">
-                                    <input class="btn btn-primary pull-right" id="" type="submit">
+                            <div class="input-field">
+                                <div class="input-field">
+                                    <input class="btn waves-effect waves-light" id="" type="submit">
                                 </div>
                             </div>
                     </div>

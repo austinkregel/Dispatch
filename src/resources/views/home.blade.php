@@ -5,9 +5,10 @@
         labels : ['{{ date("F",strtotime("-2 Months")) }}','{{ date("F",strtotime("-1 month")) }}' , '{{ date("F",strtotime("now")) }}'],
         datasets : [
             {
-                fillColor : "rgba(220,220,220,0.5)",
-                strokeColor : "rgba(220,220,220,0.8)",
-                highlightFill: "rgba(220,220,220,0.75)",
+
+                fillColor : "rgba(220,10,10,0.5)",
+                strokeColor : "rgba(220,10,10,0.8)",
+                highlightFill: "rgba(220,10,10,0.75)",
                 highlightStroke: "rgba(220,220,220,1)",
                 data : [
                     {{
@@ -18,6 +19,23 @@
                     }},
                     {{
                         Kregel\Dispatch\Models\Ticket::whereRaw('MONTH(created_at) = ?', [date('m', strtotime('now'))], 'and')->get()->count()
+                    }}
+                ]
+            },
+            {
+                fillColor : "rgba(10,220,10,0.5)",
+                strokeColor : "rgba(10,220,10,0.8)",
+                highlightFill: "rgba(10,220,10,0.75)",
+                highlightStroke: "rgba(10,220,10,1)",
+                data : [
+                    {{
+                        Kregel\Dispatch\Models\Ticket::whereRaw('MONTH(deleted_at) = ?', [date('m', strtotime('-2 months'))], 'and')->get()->count()
+                    }},
+                    {{
+                        Kregel\Dispatch\Models\Ticket::whereRaw('MONTH(deleted_at) = ?', [date('m', strtotime('-1 month'))], 'and')->get()->count()
+                    }},
+                    {{
+                        Kregel\Dispatch\Models\Ticket::whereRaw('MONTH(deleted_at) = ?', [date('m', strtotime('now'))], 'and')->get()->count()
                     }}
                 ]
             }
@@ -39,7 +57,7 @@
         </div>
         <div class="col-md-8">
             @include('dispatch::shared.errors')
-            <div class="card">
+            <div class="well white z-offset-2">
                 <div class="card-image">
                     <div class="center">
                         <div style="padding:10px;overflow:hidden;width:calc(100% - 10px);">

@@ -29,10 +29,8 @@ class TicketsController extends Controller
         if ( ! auth()->user()->can('create-ticket')) {
             return response(view('errors.403')->withMessage('Sorry, but it looks like'), 403);
         }
-        $form = $this->form
-                        ->using(config('kregel.formmodel.using.framework'))
-                        ->withModel(new $this->ticket)
-                        ->submitTo(route('warden::api.create-model', [ 'ticket' ]));
+        $form        = $this->form->using(config('kregel.formmodel.using.framework'))->withModel(new $this->ticket)->submitTo(route('warden::api.create-model',
+            [ 'ticket' ]));
         $form_submit = $form->form([
             'method'  => 'post',
             'enctype' => 'multipart/form-data',
@@ -100,7 +98,6 @@ class TicketsController extends Controller
         $ticket = $this->getUsersTicket($jurisdiction, $id);
         if (empty( $ticket->comments )) {
             dd($ticket);
-
             return view('dispatch::view.ticket-single')->with(compact('jurisdiction'))->withTicket($ticket)->withComments([ ]);
         }
         $comments = $ticket->comments()->orderBy('created_at', 'desc')->get();
@@ -109,29 +106,33 @@ class TicketsController extends Controller
     }
 
 
+    private function getUsersTicket($jurisdiction, $id)
+    {
+        return $this->getTickets(true)->whereJurisdictionId($jurisdiction->id)->whereId($id)->first();
+    }
+
+
     private function getTickets($returnAsQueryBuilder = false)
     {
-        if($returnAsQueryBuilder)
+        if ($returnAsQueryBuilder) {
             return auth()->user()->tickets();
+        }
+
         return auth()->user()->tickets;
     }
 
-    private function getUsersTicket($jurisdiction, $id){
-        return $this->getTickets(true)->whereJurisdictionId($jurisdiction->id)->whereId($id)->first();
-    }
 
     public function getTicketFromJurisdictionForEdit($jurisdiction, $id)
     {
         $jurisdiction = $this->searchJurisdiction($jurisdiction);
-        $ticket = $this->getUsersTicket($jurisdiction, $id);
-        $form = $this->form
-            ->using(config('kregel.formmodel.using.framework'))
-            ->withModel($ticket)
-            ->submitTo(route('warden::api.update-model', [ 'ticket' , $ticket->id]));
-        $form_submit = $form->form([
+        $ticket       = $this->getUsersTicket($jurisdiction, $id);
+        $form         = $this->form->using(config('kregel.formmodel.using.framework'))->withModel($ticket)->submitTo(route('warden::api.update-model',
+            [ 'ticket', $ticket->id ]));
+        $form_submit  = $form->form([
             'method'  => 'put',
             'enctype' => 'multipart/form-data',
         ]);
+
         return view('dispatch::create.ticket')->with([
             'jurisdiction' => $jurisdiction,
             'form'         => $form,

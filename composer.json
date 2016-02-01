@@ -13,7 +13,7 @@
         "kregel/warden":"dev-master",
         "kregel/formmodel": "dev-master",
         "kregel/menu": "dev-master",
-        "acoustep/entrust-gui": "dev-master",
+        "acoustep/entrust-gui": "^0.5.1",
         "phpunit/phpunit": "~4.0"
     },
     "autoload": {

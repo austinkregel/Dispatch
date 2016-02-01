@@ -70,8 +70,8 @@
                                         <?php $comments = $ticket->comments()->orderBy('created_at',
                                                 'desc')->limit(5)->get()?>
                                         @foreach($comments as $comment)
-                                            <li class="card active" style="border-radius:5px; ">
-                                                <span class="card-title collapsible-header active @if(config('app.debug')) themer--secondary @endif">
+                                            <li class="" style="border-radius:5px; ">
+                                                <span class="  active @if(config('app.debug')) themer--secondary @endif">
                                                     {{ $comment->user->name }}
                                                     <div class="close">&times;</div>
                                                     <div class="card-badge">
@@ -79,11 +79,10 @@
 
                                                     </div>
                                                 </span>
-                                                <div class="collapsible-body @if(config('app.debug')) themer--accent-2 @endif">
+                                                <div class=" @if(config('app.debug')) themer--accent-2 @endif">
                                                     <p>{{$comment->body}}</p>
                                                 </div>
                                             </li>
-                                            <li class="filler-card-comments"></li>
                                         @endforeach
                                     @endif
 

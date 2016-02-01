@@ -49,10 +49,10 @@ class TicketsController extends Controller
                 'form_'        => $form_submit
             ]);
         }
-        $jurisdiction = Jurisdiction::whereName($jurisdiction)->first();
+        $jurisdiction = Jurisdiction::whereName($jurisdiction)->get();
 
         return view('dispatch::create.ticket')->with([
-            'jurisdiction' => $jurisdiction,
+            'jurisdiction' => $jurisdiction->first(),
             'form'         => $form,
             'form_'        => $form_submit
         ]);
@@ -97,7 +97,6 @@ class TicketsController extends Controller
         //This line should be limited to admins+ not include contacts / maintence.
         $ticket = $this->getUsersTicket($jurisdiction, $id);
         if (empty( $ticket->comments )) {
-            dd($ticket);
             return view('dispatch::view.ticket-single')->with(compact('jurisdiction'))->withTicket($ticket)->withComments([ ]);
         }
         $comments = $ticket->comments()->orderBy('created_at', 'desc')->get();
@@ -126,8 +125,10 @@ class TicketsController extends Controller
     {
         $jurisdiction = $this->searchJurisdiction($jurisdiction);
         $ticket       = $this->getUsersTicket($jurisdiction, $id);
-        $form         = $this->form->using(config('kregel.formmodel.using.framework'))->withModel($ticket)->submitTo(route('warden::api.update-model',
-            [ 'ticket', $ticket->id ]));
+        $form         = $this->form
+                ->using(config('kregel.formmodel.using.framework'))
+                ->withModel($ticket)
+                ->submitTo(route('warden::api.update-model', [ 'ticket', $ticket->id ]));
         $form_submit  = $form->form([
             'method'  => 'put',
             'enctype' => 'multipart/form-data',

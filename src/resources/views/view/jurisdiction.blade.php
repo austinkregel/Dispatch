@@ -10,7 +10,7 @@
             <div class="col-md-8">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        File a ticket for
+                        Showing Jurisdictions
                     </div>
                     <div class="panel-body">
                         @include('dispatch::shared.errors')
@@ -19,8 +19,8 @@
                             @foreach($jurisdiction->first()->getFillable() as $field)
                                 {!! ((stripos($field, 'password')=== false) ?'<th>'.e($field).'</th>': '') !!}
                             @endforeach
-                            <th style="width:40px">Edit</th>
-                            <th style="width:54px">Delete</th>
+                            {{--<th style="width:40px">Edit</th>--}}
+                            {{--<th style="width:54px">Delete</th>--}}
                             </thead>
                             <tbody>
                             @foreach($jurisdiction as $model)
@@ -36,21 +36,21 @@
                                             </td>
                                         @endif
                                     @endforeach
-                                    <td>
-                                        <span style="font-size:24px;">
-                                            <a href="">
-                                                <i class="@if(config('kregel.warden.using.fontawesome') === true) fa fa-edit @else glyphicon glyphicon-edit @endif"></i>
-                                            </a>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span style="text-align:right;float:right; font-size:24px;padding-right:10px;">
-                                        <form action="" method='post'>
-                                            <input type="hidden" name="_method" value="DELETE">
-                                            @if(config('kregel.warden.using.csrf')) <input type="hidden" name="_token" value="{{csrf_token()}}">@endif
-                                            <button type="submit" class="method-button"><i class="@if(config('kregel.warden.using.fontawesome') === true) fa fa-trash-o @else glyphicon glyphicon-trash @endif"></i></button>
-                                        </form>
-                                    </td>
+                                    {{--<td>--}}
+                                        {{--<span style="font-size:24px;">--}}
+                                            {{--<a href="">--}}
+                                                {{--<i class="@if(config('kregel.warden.using.fontawesome') === true) fa fa-edit @else glyphicon glyphicon-edit @endif"></i>--}}
+                                            {{--</a>--}}
+                                        {{--</span>--}}
+                                    {{--</td>--}}
+                                    {{--<td>--}}
+                                        {{--<span style="text-align:right;float:right; font-size:24px;padding-right:10px;">--}}
+                                        {{--<form action="" method='post'>--}}
+                                            {{--<input type="hidden" name="_method" value="DELETE">--}}
+                                            {{--@if(config('kregel.warden.using.csrf')) <input type="hidden" name="_token" value="{{csrf_token()}}">@endif--}}
+                                            {{--<button type="submit" class="method-button"><i class="@if(config('kregel.warden.using.fontawesome') === true) fa fa-trash-o @else glyphicon glyphicon-trash @endif"></i></button>--}}
+                                        {{--</form>--}}
+                                    {{--</td>--}}
                                 </tr>
                             @endforeach
                             </tbody>

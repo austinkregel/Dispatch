@@ -39,8 +39,8 @@
 
                         <?php $color = lighten('#'.config('kregel.dispatch.color'),
                                 (1 - ($i / count($tickets))));//getClosest(hexdec(dechex(floor((abs(sin(hexdec(substr($ticket->title, 0, strlen($ticket->title)/2.5)))* 16777215)) % 16777215))) , $colors);?>
-                        <li class="card">
-                            <div class="card-title collapsible-header @if(config('app.debug')) themer--secondary @endif"
+                        <li class="card active">
+                            <div class="card-title collapsible-header active @if(config('app.debug')) themer--secondary @endif"
                                  style="background:#{{  $color }}">
                                 <div class="card-title-custom">
                                     {{$ticket->title}} &mdash; Priority {{ $ticket->priority->name }}
@@ -71,7 +71,7 @@
                                 </div>
                             </div>
                             <div class="collapsible-body @if(config('app.debug')) themer--accent-1 @endif"
-                                 style="background-color:#{{ lighten($color, 0.3)}} !important;">
+                                 style="background-color:#{{ lighten($color, 0.3)}} !important;display:block;font-size:1.5rem">
                                 <p>
                                     {{$ticket->body}}
                                 </p>
@@ -103,7 +103,7 @@
                                             <?php $comments = $ticket->comments()->orderBy('created_at',
                                                     'desc')->limit(5)->get()?>
                                             @foreach($comments as $comment)
-                                                <li class="card ">
+                                                <li class="card active ">
                                                     <span class="card-title collapsible-header @if(config('app.debug')) themer--secondary @endif">
                                                         {{ $comment->user->name }}
                                                         <div class="ticket-action close-ticket"><i class="fa fa-times"></i></div>
@@ -112,7 +112,7 @@
                                                             <span class="badge customize">Created: {{ date('M d, Y H:i', strtotime($comment->created_at)) . ' '. $comment->id }}</span>
                                                         </div>
                                                     </span>
-                                                    <div class="collapsible-body @if(config('app.debug')) themer--accent-2 @endif">
+                                                    <div class="collapsible-body @if(config('app.debug')) themer--accent-2 @endif" style="display:block;font-size:1.5rem">
                                                         <p>{{$comment->body}}</p>
                                                     </div>
                                                 </li>

@@ -50,7 +50,7 @@ class CheckTickets extends Command implements SelfHandling
         $tickets_today = $this->search(['created_at' => date('Y-m-d', strtotime('now')), 'priority_id' => ''], new Ticket());
     }
 
-    private function search(Array $for, Model $in)
+    private function search(array $for, Model $in)
     {
         $results = [];
         foreach ($for as $where => $value) {

@@ -14,9 +14,9 @@ class Jurisdiction extends Model
         parent::boot();
         self::creating(function ($jurisdiction) {
             $perm = Permission::create([
-                'name' => 'view-'.str_slug($jurisdiction->name),
+                'name'         => 'view-'.str_slug($jurisdiction->name),
                 'display_name' => 'View '.$jurisdiction->name,
-                'description' => 'This permission will let the user view '.strtolower($jurisdiction->name),
+                'description'  => 'This permission will let the user view '.strtolower($jurisdiction->name),
             ]);
         });
         self::created(function ($jurisdiction) {
@@ -27,8 +27,9 @@ class Jurisdiction extends Model
             }
         });
     }
+
     protected $warden = [
-        'name' => 'name',
+        'name'         => 'name',
         'phone_number' => 'phone',
     ];
 

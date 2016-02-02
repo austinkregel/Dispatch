@@ -18,7 +18,7 @@ class JurisdictionController extends Controller
                 ->withModel(new JurisdictionModel())
                 ->submitTo(route('warden::api.create-model', 'jurisdiction'))
                 ->form([
-                    'method' => 'post',
+                    'method'  => 'post',
                     'enctype' => 'multipart/form-data',
                 ]);
         if (empty($jurisdiction)) {
@@ -28,7 +28,7 @@ class JurisdictionController extends Controller
 
         return view('dispatch::create.jurisdiction')->with([
                 'jurisdiction' => $jurisdiction,
-                'form' => $form,
+                'form'         => $form,
             ]);
     }
 
@@ -43,7 +43,7 @@ class JurisdictionController extends Controller
 
         return view('dispatch::create.jurisdiction')->with([
             'jurisdiction' => $jurisdictions->first(),
-            'form' => $form,
+            'form'         => $form,
         ]);
     }
 

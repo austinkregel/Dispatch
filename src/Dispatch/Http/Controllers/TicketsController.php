@@ -2,21 +2,23 @@
 
 namespace Kregel\Dispatch\Http\Controllers;
 
+use Auth;
 use Kregel\Dispatch\Models\Jurisdiction;
 use Kregel\FormModel\FormModel;
-use Auth;
 
 class TicketsController extends Controller
 {
     protected $form;
     protected $ticket;
     protected $jurisdiction;
+
     public function __construct(FormModel $form)
     {
         $this->form = $form;
         $this->ticket = config('kregel.dispatch.models.ticket');
         $this->jurisdiction = config('kregel.dispatch.models.jurisdiction');
     }
+
     public function create($jurisdiction = null)
     {
         if (!auth()->user()->can('create-ticket')) {
@@ -26,7 +28,7 @@ class TicketsController extends Controller
             ->withModel(new $this->ticket())
             ->submitTo(route('warden::api.create-model', ['ticket']))
             ->form([
-                'method' => 'post',
+                'method'  => 'post',
                 'enctype' => 'multipart/form-data',
             ]);
         if (empty($jurisdiction)) {
@@ -39,14 +41,14 @@ class TicketsController extends Controller
 
             return view('dispatch::create.ticket')->with([
                 'jurisdiction' => $jurisdictions->first(),
-                'form' => $form,
+                'form'         => $form,
             ]);
         }
         $jurisdiction = Jurisdiction::whereName($jurisdiction)->first();
 
         return view('dispatch::create.ticket')->with([
             'jurisdiction' => $jurisdiction,
-            'form' => $form,
+            'form'         => $form,
         ]);
     }
 
@@ -55,6 +57,7 @@ class TicketsController extends Controller
         return view('dispatch::view.ticket')
                     ->withJurisdictions(\auth()->user()->jurisdiction);
     }
+
     public function getTicketsForJurisdiction($jurisdiction)
     {
         $jur = str_replace('-', '%', '%'.$jurisdiction.'%');

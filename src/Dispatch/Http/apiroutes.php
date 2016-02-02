@@ -19,7 +19,7 @@ Route::group(['prefix' => 'create'], function () {
 //            Route::post('document', '');
 //            Route::post('image', '');
 //            Route::post('video', '');
-    Route::post('{model}', 'Api\Create\Create@create');// I'm throwing in ALLLL the creates :3
+    Route::post('{model}', 'Api\Create\Create@create'); // I'm throwing in ALLLL the creates :3
 });
 
 /*

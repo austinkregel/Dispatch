@@ -2,23 +2,24 @@
 
 namespace Kregel\Dispatch\Http\Controllers;
 
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Validator;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller as BaseController;
+use Validator;
 
 abstract class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
     /**
      * @param Request $r
-     * @param Array   $data
+     * @param array   $data
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $r, Array $valid)
+    public function store(Request $r, array $valid)
     {
         $status = ($r->ajax() ? 202 : 200);
         $file = $r->file('file');

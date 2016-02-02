@@ -7,9 +7,7 @@ use Kregel\Warden\Traits\Wardenable;
 
 class Ticket extends Model
 {
-
     use Wardenable;
-
 
     protected $fillable = [
         'title',
@@ -22,84 +20,74 @@ class Ticket extends Model
 
     protected $table = 'dispatch_tickets';
 
-
     public static function boot()
     {
         parent::boot();
     }
 
     protected $warden = [
-        'title' => 'title',
-        'body' => 'body',
-        'priority_id' => 'priority',
-        'owner_id' => 'owner',
+        'title'           => 'title',
+        'body'            => 'body',
+        'priority_id'     => 'priority',
+        'owner_id'        => 'owner',
         'jurisdiction_id' => 'jurisdiction',
-        'closer_id' => 'closer',
+        'closer_id'       => 'closer',
     ];
-
 
     public function owner()
     {
         return $this->belongsTo(config('auth.model'));
     }
 
-
     public function closer()
     {
         return $this->belongsTo(config('auth.model'));
     }
-
 
     public function assigned_to()
     {
         return $this->belongsToMany(config('auth.model'), 'dispatch_ticket_user');
     }
 
-
     public function jurisdiction()
     {
         return $this->belongsTo(Jurisdiction::class);
     }
-
 
     public function comments()
     {
         return $this->hasMany(Comments::class);
     }
 
-
     public function priority()
     {
         return $this->belongsTo(Priority::class);
     }
 
-
     public function adjust($userId = null, $diff = null)
     {
         $userId = $userId ?: auth()->user()->id;
-        $diff   = $diff ?: $this->getDiff();
+        $diff = $diff ?: $this->getDiff();
 
         return $this->adjustments()->attach($userId, $diff);
     }
 
-
     public function getDiff()
     {
         $changed = $this->getDirty();
-        $before  = json_encode(array_intersect($this->fresh()->toArray(), $changed));
-        $after   = json_encode($changed);
-        $hash    = sha1($this);
+        $before = json_encode(array_intersect($this->fresh()->toArray(), $changed));
+        $after = json_encode($changed);
+        $hash = sha1($this);
 
         return compact('before', 'after', 'hash');
     }
-
 
     public function adjustments()
     {
         return $this->belongsToMany(config('auth.model'), 'dispatch_ticket_edits')->withTimestamps()->withPivot([
                 'before',
                 'after',
-                'hash'
+                'hash',
             ])->latest('pivot_updated_at');
     }
 }

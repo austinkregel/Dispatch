@@ -2,8 +2,8 @@
 
 namespace Kregel\Dispatch;
 
-use Kregel\Dispatch\Commands\CheckTickets;
 use Illuminate\Support\ServiceProvider;
+use Kregel\Dispatch\Commands\CheckTickets;
 use Kregel\Dispatch\Models\Jurisdiction;
 use Kregel\Dispatch\Models\Ticket;
 

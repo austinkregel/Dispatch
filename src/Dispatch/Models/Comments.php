@@ -16,9 +16,9 @@ class Comments extends Model
     ];
 
     protected $warden = [
-        'body' => 'body',
-        'user_id' => 'user_id',
-        'ticket_id' => 'ticket_id'
+        'body'      => 'body',
+        'user_id'   => 'user_id',
+        'ticket_id' => 'ticket_id',
     ];
 
     protected $table = 'dispatch_ticket_comments';

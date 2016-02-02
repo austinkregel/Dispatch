@@ -12,7 +12,7 @@ class Create extends Controller
         if (empty($models)) {
             return response()->json([
                 'message' => 'Either the config is missing or misnamed, please fix this and try again',
-                'code' => 422,
+                'code'    => 422,
             ], 422);
         }
         if (!array_key_exists($model, $models)) {
@@ -24,13 +24,13 @@ class Create extends Controller
         if ($model->save()) {
             return response()->json([
                 'message' => 'Your model has been saved!',
-                'code' => request()->ajax() ? 202 : 200,
+                'code'    => request()->ajax() ? 202 : 200,
             ], request()->ajax() ? 202 : 200);
         }
 
         return response()->json([
             'message' => 'We could not save that model.',
-            'code' => 422,
+            'code'    => 422,
         ], 422);
     }
 }

@@ -26,10 +26,13 @@
                                 @{{ response }}
                                 <div class="close" @click="close">&times;</div>
                         </div>
-                        <form @submit.prevent="makeRequest" method="POST" enctype="multipart/form-data"
+                        <form method="POST" enctype="multipart/form-data"
                               action="{{ route('warden::api.create-model', ['ticket']) }}">
                             <div class="form-group">
                                 <input class="form-control" id="_method" type="hidden" name="_method" value="post">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" id="_redirect" type="hidden" name="_redirect" value="{{ route('dispatch::view.ticket', [str_slug($jurisdiction->name)]) }}">
                             </div>
                             <div class="form-group">
                                 <input class="form-control" v-model="data.owner_id" id="owner_id" type="hidden"
@@ -99,48 +102,4 @@
                 </div>
             </div>
         </div>
-        <script>
-            var data = {
-                response: '',
-                responseClasses: '',
-                debug: '',
-                data: {
-                    _token: "{{csrf_token()}}",
-                    title: '',
-                    body: '',
-                    priority_id: '',
-                    assign_to: ''
-                }
-            };
-            new Vue({
-                el: "#vue-form-wrapper",
-                data: data,
-                methods: {
-                    makeRequest: function (e) {
-                        e.preventDefault();
-                        var self = this;
-                        console.log(JSON.stringify(this.$data.data));
-
-                        request(e.target.action,
-                                'post',
-                                this.$data.data
-                                , function (responseArea) {
-                                    self.response = (responseArea.message);
-                                    self.responseClasses = 'alert alert-success';
-                                }, function (responseArea) {
-                                    self.response = (responseArea.message);
-                                    self.responseClasses = 'alert alert-success';
-                                }, function (responseArea) {
-                                    self.response = (responseArea.message);
-                                    self.responseClasses = 'alert alert-success';
-                                });
-                    },
-                    close: function (e) {
-                        this.response = '';
-                    }
-                }
-            });
-            @include('formmodel::request')
-        </script>
-
-@endsection
+    </div>@endsection

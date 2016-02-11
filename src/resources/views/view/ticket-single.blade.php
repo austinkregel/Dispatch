@@ -30,7 +30,7 @@
                                 @endif
                                 @if(!empty($ticket->closer->id))
                                 <span class="badge green customize">Closed</span>
-                                @elseif(($ticket->assigned_to->count()) > 0 )
+                                @elseif(($ticket->assign_to->count()) > 0 )
                                 <span class="badge red customize" style="font-style:italic;">assigned</span>
                                 @elseif(empty($ticket->closer->id))
                                 <span class="badge blue customize" style="font-style:italic;">pending</span>
@@ -42,12 +42,12 @@
                             <p>
                                 {{$ticket->body}}
                             </p>
-                            @if($ticket->assigned_to->count() > 0)
+                            @if($ticket->assign_to->count() > 0)
                             <div style="margin:30px;">
                                 This ticket is assigned to:
                                 <div class="col-md-12">
                                     <?php
-                                    $users = $ticket->assigned_to;
+                                    $users = $ticket->assign_to;
                                     ?>
                                     @if( !empty($users))
                                         <?php

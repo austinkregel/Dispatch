@@ -27,9 +27,12 @@
                                 <div class="close" @click="close">&times;</div>
                         </div>
                         <form @submit.prevent="makeRequest" method="POST" enctype="multipart/form-data"
-                              action="{{ route('warden::api.create-model', ['ticket']) }}">
+                              action="{{ route('warden::api.update-model', ['ticket', $ticket->id]) }}">
                             <div class="form-group">
-                                <input class="form-control" id="_method" type="hidden" name="_method" value="post">
+                                <input class="form-control" id="_method" type="hidden" name="_method" value="put">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" id="_redirect" type="hidden" name="_redirect" value="{{ route('dispatch::view.ticket', [str_slug($jurisdiction->name)]) }}">
                             </div>
                             <div class="form-group">
                                 <input class="form-control" v-model="data.owner_id" id="owner_id" type="hidden"
@@ -44,14 +47,13 @@
                             <div class="form-group">
                                 <label for="title">Title</label>
 
-                                <textarea class="form-control" cols="3" id="title" type="text" name="title"
-                                          v-model="data.title"></textarea>
+                                <textarea class="form-control" cols="3" id="title" type="text" name="title" v-model="data.title">{{ $ticket->title }}</textarea>
                             </div>
                             <div class="form-group">
                                 <label for="body">Body</label>
 
                                 <textarea class="form-control" cols="3" id="body" type="text" name="body"
-                                          v-model="data.body"></textarea>
+                                          v-model="data.body">{{ $ticket->body }}</textarea>
                             </div>
                             <div class="form-group">
                                 <select id="priority_id" default="" type="select" name="priority_id"
@@ -59,7 +61,7 @@
                                     <option value="" disabled selected>Please select a priority to assign this to
                                     </option>
                                     @foreach(\Kregel\Dispatch\Models\Priority::all() as $priority)
-                                        <option value="{{ $priority->id }}">{{ $priority->name }}</option>
+                                        <option value="{{ $priority->id }}" @if($priority->id === $ticket->priority->id)selected @endif>{{ $priority->name }}</option>
                                     @endforeach
                                 </select>
 
@@ -69,7 +71,7 @@
                                     <select multiple id="jurisdiction" v-model="data.jurisdiction_id">
                                         <option value="" disabled selected>Please assign this to a location</option>
                                         @foreach(auth()->user()->jurisdiction as $jurisdiction)
-                                            <option value="{{ $jurisdiction->id }}">{{ $jurisdiction->name }}</option>
+                                            <option value="{{ $jurisdiction->id }}"  @if($jurisdiction->id === $ticket->jurisdiction->id)selected @endif>{{ $jurisdiction->name }}</option>
                                         @endforeach
 
                                     </select>
@@ -80,12 +82,10 @@
                                     <select multiple id="assign_to" class="form-control" v-model="data.assign_to">
                                         <option value="" disabled selected>Please assign a user or two</option>
                                         @foreach($jurisdiction->users as $user)
-                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                            <option value="{{ $user->id }}" @if($ticket->assign_to->contains($user->id))selected @endif>{{ $user->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-
-
                             @endif
                             <div class="form-group">
                                 <div class="form-group">

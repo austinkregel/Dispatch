@@ -14,7 +14,7 @@
         .user-picture {
             z-index: 9;
             position: relative;
-            margin-top: -10rem;
+            margin-top: -15rem;
             height: 200px;
         }
 
@@ -43,8 +43,8 @@
             <article>
                 <nav class="container-fluid">
                     <div class="container">
-                        <ul class="col-md-8 col-md-offset-4">
-                            {!! $menu->using('MaterializePjax')
+                        <ul class="col-md-8 col-md-offset-4 nav navbar-nav navbar-right">
+                            {!! $menu->using('bootstrap')
                                  ->add([
                                      'Contact Me' => [
                                           'link' => 'mailto:' . $user->email,
@@ -61,7 +61,7 @@
         <section class="container ">
             <div class="col-md-4" style="">
                 <aside class="user-picture center" style="">
-                    <img src="https://secure.gravatar.com/avatar/{{md5($user->email)}}?d=mm&s=200" alt=""
+                    <img src="https://secure.gravatar.com/avatar/{{md5($user->email)}}?d=identicon&s=200" alt=""
                          class="center z-depth-1">
                 </aside>
                 <h5>{{ ucwords($user->name) }}</h5>
@@ -94,7 +94,7 @@
                                     @endif
                                     @if(!empty($ticket->closer->id))
                                         <span class="badge green customize">Closed</span>
-                                    @elseif(($ticket->assigned_to->count()) > 0 )
+                                    @elseif(($ticket->assign_to->count()) > 0 )
                                         <span class="badge red customize" style="font-style:italic;">assigned</span>
                                     @elseif(empty($ticket->closer->id))
                                         <span class="badge blue customize" style="font-style:italic;">pending</span>
@@ -105,7 +105,7 @@
                                 <p>
                                     {{$ticket->body}}
                                 </p>
-                                @if($ticket->assigned_to->count() > 0)
+                                @if($ticket->assign_to->count() > 0)
                                     <div style="margin:30px;">
                                         This ticket is assigned to:
                                         <div class="col-md-12">

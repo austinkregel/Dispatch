@@ -38,7 +38,7 @@ class Ticket extends Model
     }
 
 
-    public function assigned_to()
+    public function assign_to()
     {
         return $this->belongsToMany(config('auth.model'), 'dispatch_ticket_user');
     }
@@ -91,4 +91,14 @@ class Ticket extends Model
             ])->latest('pivot_updated_at');
     }
 
+    public function mailUsers(){
+        $assigned_users = $this->getEmailList();
+    }
+    public function mailUsersUpdate(){
+
+    }
+
+    private function getEmailList(){
+        $emails = $this->assign_to()->select('email')->get()->toArray();
+    }
 }

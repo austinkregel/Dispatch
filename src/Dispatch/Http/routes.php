@@ -24,6 +24,6 @@ Route::group(['prefix' => config('kregel.dispatch.route'), 'as' => 'dispatch::',
         Route::get('jurisdictions', ['as' => 'jurisdiction', 'uses' => 'JurisdictionController@viewAll']);
     });
     Route::group(['as' => 'profile.', 'prefix' => config('kregel.auth-login.profile.route')], function () {
-        Route::get('{id}/{name}', ['as' => 'user', 'uses' => 'ProfileController@viewProfile']);
+        Route::get('{id}/{name?}', ['as' => 'user', 'uses' => 'ProfileController@viewProfile']);
     });
 });

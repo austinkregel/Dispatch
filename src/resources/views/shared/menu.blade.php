@@ -37,7 +37,7 @@
                     <ul class="dropdown-menu">
                         @foreach (auth()->user()->jurisdiction as $jur)
                             <li>
-                                <a href="{{ route('dispatch::view.jurisdiction', [str_slug($jur->name)]) }}"
+                                <a href="{{ route('dispatch::new.jurisdiction', [str_slug($jur->name)]) }}"
                                    class="p-link">
                                     <i class="fa fa-btn fa-fw fa-cog"></i>New {{ $jur->name }}
                                     @if(!$jur->tickets->isEmpty())

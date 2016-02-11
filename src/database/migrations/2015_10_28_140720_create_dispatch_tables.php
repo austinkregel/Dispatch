@@ -45,6 +45,7 @@ class CreateDispatchTables extends Migration
         Schema::create('dispatch_priority', function (Blueprint $table) {
             $table->increments('id');
             $table->text('name');
+            $table->integer('stars');
             $table->string('deadline');
             $table->timestamps();
         });

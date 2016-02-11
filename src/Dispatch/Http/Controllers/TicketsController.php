@@ -16,6 +16,21 @@ class TicketsController extends Controller
     protected $jurisdiction;
 
 
+    /**
+     * Mike wants to be able to edit who is assigned to the ticket, and still
+     * have them kept in the loop for updates. More or less to let them be able
+     * to re assign themselves to another business.
+     *
+     *
+     * If person is jurisdiction  owner they can who in a department gets the
+     * ticket to work on. If the person is not the owner, they can assign it
+     * to a department, the owner can specify who is in which department, byt
+     * it can vary between businesses. Each business needs to be able to have
+     * their own departments to throw more things under. If you're department
+     * is assign to a ticket you can replace your department with another if
+     * you believe your department won't fit the goal of the task desired.
+     *
+     */
     public function __construct(FormModel $form)
     {
         $this->form         = $form;
@@ -97,11 +112,11 @@ class TicketsController extends Controller
         //This line should be limited to admins+ not include contacts / maintence.
         $ticket = $this->getUsersTicket($jurisdiction, $id);
         if (empty( $ticket->comments )) {
-            return view('dispatch::view.ticket-single')->with(compact('jurisdiction'))->withTicket($ticket)->withComments([ ]);
+            return view('dispatch::view.ticket-single-new')->with(compact('jurisdiction'))->withTicket($ticket)->withComments([ ]);
         }
         $comments = $ticket->comments()->orderBy('created_at', 'desc')->get();
 
-        return view('dispatch::view.ticket-single')->with(compact('jurisdiction'))->withTicket($ticket)->withComments($comments);
+        return view('dispatch::view.ticket-single-new')->with(compact('jurisdiction'))->withTicket($ticket)->withComments($comments);
     }
 
 
@@ -134,8 +149,9 @@ class TicketsController extends Controller
             'enctype' => 'multipart/form-data',
         ]);
 
-        return view('dispatch::create.ticket')->with([
+        return view('dispatch::edit.ticket')->with([
             'jurisdiction' => $jurisdiction,
+            'ticket'       => $ticket,
             'form'         => $form,
             'form_'        => $form_submit
         ]);

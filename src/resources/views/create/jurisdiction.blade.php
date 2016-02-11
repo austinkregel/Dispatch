@@ -10,7 +10,7 @@
             <div class="col-md-8">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        File a ticket for {{ $jurisdiction->name }}
+                        Create a new Jurisdiction {{ $jurisdiction }}
                     </div>
                     <div class="panel-body">
                         @include('dispatch::shared.errors')

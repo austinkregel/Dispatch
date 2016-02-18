@@ -3,6 +3,7 @@
     <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+    @include('dispatch::header', ['header' => 'Showing Jurisdictions'])
 
     <div class="container spark-screen">
         <div class="row">
@@ -55,6 +56,12 @@
 
                                 <textarea class="form-control" cols="3" id="body" type="text" name="body"
                                           v-model="data.body"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="finish_by">Finish by (optional)</label>
+
+                                <input class="form-control" id="finish_by" type="date" name="finish_by"
+                                          v-model="data.finish_by">
                             </div>
                             <div class="form-group">
                                 <select id="priority_id" default="" type="select" name="priority_id"

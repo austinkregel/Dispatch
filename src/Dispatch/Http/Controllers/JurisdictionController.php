@@ -47,6 +47,31 @@ class JurisdictionController extends Controller
         ]);
     }
 
+    public function getJurisdictionForEdit($jurisdiction = null)
+    {
+        $form = $this->form->using(config('kregel.formmodel.using.framework'))
+            ->withModel(new JurisdictionModel())
+            ->submitTo(route('warden::api.create-model', 'jurisdiction'))
+            ->form([
+                'method' => 'post',
+                'enctype' => 'multipart/form-data',
+            ]);
+        if (empty($jurisdiction)) {
+            return $this->checkJurisdiction($form);
+        }
+        $jurisdiction = auth()->user()->jurisdiction()->where('name','LIKE', str_replace('-', '%',$jurisdiction))->first();
+
+        return view('dispatch::edit.jurisdiction')->with([
+            'jurisdiction' => $jurisdiction,
+            'form' => $this->form->using(config('kregel.formmodel.using.framework'))->withModel($jurisdiction)
+                ->submitTo(route('warden::api.update-model', ['jurisdiction', $jurisdiction->id]))
+                ->form([
+                    'method' => 'put',
+                    'enctype' => 'multipart/form-data',
+                ]),
+        ]);
+    }
+
     public function viewAll()
     {
         return view('dispatch::view.jurisdiction')->withJurisdiction(auth()->user()->jurisdiction);

@@ -1,6 +1,7 @@
 @extends(config('kregel.dispatch.view-base'))
 @section('content')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.11/vue.js"></script>
+    @include('dispatch::header', ['header' => 'Create a new Jurisdiction '.$jurisdiction])
 
     <div class="container spark-screen">
         <div class="row">
@@ -10,7 +11,7 @@
             <div class="col-md-8">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Create a new Jurisdiction {{ $jurisdiction }}
+
                     </div>
                     <div class="panel-body">
                         @include('dispatch::shared.errors')

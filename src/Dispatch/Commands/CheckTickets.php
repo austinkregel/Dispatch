@@ -11,19 +11,28 @@ use Kregel\Dispatch\Models\Ticket;
 
 class CheckTickets extends Command implements SelfHandling
 {
+
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'dispatch:check-tickets';
+    protected $signature = 'dispatch:check-tickets' . ' {--fake= : Whether emails should be sent updating the user on the ticket statuses}';
+
+    /**
+     * This value is the difference between emailing all your clients at a random
+     * time and just checking if the command works.
+     * @var bool
+     */
+    protected $is_fake;
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command for EternalTree migration & model install.';
+    protected $description = 'Command for checking all the tickets involved with our databases';
+
 
     /**
      * Create a new command instance.
@@ -33,6 +42,7 @@ class CheckTickets extends Command implements SelfHandling
         parent::__construct();
     }
 
+
     /**
      * Execute the console command.
      *
@@ -40,29 +50,98 @@ class CheckTickets extends Command implements SelfHandling
      */
     public function fire()
     {
+        switch (strtolower($this->option('fake'))) {
+            case 'no':
+            case 'false':
+            case 'negative':
+            case 'nope':
+                $this->is_fake = false;
+                break;
+            case 'yea':
+            case 'true':
+            case 'yes':
+                $this->is_fake = true;
+                break;
+            default:
+                $this->is_fake = !config('mail.pretend');
+        }
         $this->checkTicketForDeadlinePriority();
-        $this->info('Command dispatch:tickets fire');
     }
 
+
+    /**
+     * @return void
+     */
     public function checkTicketForDeadlinePriority()
     {
-        $priorities = Priority::all();
-        $tickets_today = $this->search(['created_at' => date('Y-m-d', strtotime('now')), 'priority_id' => ''], new Ticket());
+        $priorities    = Priority::all();
+        $date          = date('Y-m-d', strtotime('now'));
+        $tickets_month = Ticket::whereDate('finish_by', '<=', date('Y-m-d', strtotime('+1 month')))
+            ->whereDate('finish_by', '>=', date('Y-m-d', strtotime('+1 week')) )->get();
+
+        $tickets_week = Ticket::whereDate('finish_by', '<=', date('Y-m-d', strtotime('+1 week')) )->get();
+        dd([
+            'tickets this month, but not this week' =>$tickets_month->count(),
+            'tickets this week' => $tickets_week->count(),
+            'Now' => $date,
+            'Now plus a week' => date('Y-m-d', strtotime('+1 week')),
+            'is_fake' => $this->is_fake
+        ]);
     }
 
-    private function search(Array $for, Model $in)
+
+    /**
+     * @param array $for
+     * @param Model $in
+     * @param bool  $returnQuery
+     *
+     * @return Collection|QueryBuilder
+     */
+    private function search(array $for, Model $in, $returnQuery = false)
     {
-        $results = [];
-        foreach ($for as $where => $value) {
-            $results[] = $in->where($where, 'like', $this->searchableWhere($value))->get();
+        $results       = [ ];
+        $queryBuilders = [ ];
+        $query         = null;
+        foreach ($for as $fields) {
+            if ($query === null) {
+                $query = $this->where($in, $fields);
+            } else {
+                $query = $this->where($query, $fields);
+            }
+        }
+        if ($returnQuery) {
+            return $query;
+        }
+        foreach ($queryBuilders as $query) {
+            $results[] = $query->get();
         }
 
-        return new Collection($results);
+        return collect($results);
     }
 
-    private function searchableWhere($where, $dontStrip = [])
+
+    /**
+     * @param $query
+     * @param $where
+     *
+     * @return QueryBuilder
+     */
+    private function where($query, $where)
     {
-        return '%'.(str_replace(' ', '%',
-            preg_replace('/[^a-z0-9'.implode('', $dontStrip).']+/', ' ', $where))).'%';
+        list( $field, $relation, $value ) = $where;
+
+        return $query->where($field, $relation, $value);
+    }
+
+
+    /**
+     * @param       $where
+     * @param array $dontStrip
+     *
+     * @return string
+     */
+    private function searchableWhere($where, $dontStrip = [ ])
+    {
+        return '%' . ( str_replace(' ', '%', preg_replace('/[^a-z0-9' . implode('', $dontStrip) . ']+/', ' ', $where)) ) . '%';
     }
 }

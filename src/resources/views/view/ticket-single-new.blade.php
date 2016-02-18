@@ -1,12 +1,6 @@
 @extends(config('kregel.dispatch.view-base'))
 @section('content')
-    <div class="col-md-12" style="padding:0;">
-        <div class="jumbotron">
-            <div class="container">
-                <h2>Tickets for {{ $jurisdiction->name }}</h2>
-            </div>
-        </div>
-    </div>
+    @include('dispatch::header', ['header' => 'Tickets for '. $jurisdiction->name])
     <div class="container spark-screen">
         <div class="row">
             <div class="col-md-4">

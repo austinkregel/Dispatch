@@ -1,6 +1,7 @@
 @extends(config('kregel.dispatch.view-base'))
 @section('content')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.11/vue.js"></script>
+@include('dispatch::header', ['header' => 'Hmmm... Looks like you belong to quite a few jurisdictions... Try selecting the one you want below'])
 
 <div class="container spark-screen">
     <div class="row">
@@ -10,7 +11,7 @@
         <div class="col-md-8">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Hmmm... Looks like you belong to quite a few jurisdictions... Try selecting the one you want below
+
                 </div>
                 <div class="panel-body">
                     @include('dispatch::shared.errors')

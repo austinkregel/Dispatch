@@ -3,7 +3,7 @@
     <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
-    @include('dispatch::header', ['header' => !empty($jurisdiction)?'Edit a ticket for '.$jurisdiction->name:'Edit a ticket'])
+    @include('dispatch::header', ['header' => 'File a ticket'])
 
     <div class="container spark-screen">
         <div class="row">
@@ -20,69 +20,54 @@
                                 <div class="close" @click="close">&times;</div>
                         </div>
                         <form method="POST" enctype="multipart/form-data"
-                              action="{{ route('warden::api.update-model', ['ticket', $ticket->id]) }}">
+                              action="{{ route('warden::api.create-model', ['ticket']) }}">
                             <div class="form-group">
-                                <input class="form-control" id="_method" type="hidden" name="_method" value="put">
-                            </div>
-                            <div class="form-group">
-                                <input class="form-control" id="_redirect" type="hidden" name="_redirect" value="{{ route('dispatch::view.ticket', [str_slug($jurisdiction->name)]) }}">
+                                <input class="form-control" id="_method" type="hidden" name="_method" value="post">
                             </div>
                             <div class="form-group">
                                 <input class="form-control" v-model="data.owner_id" id="owner_id" type="hidden"
                                        name="owner_id" value="{{ auth()->user()->id }}">
                             </div>
-                            <div class="form-group">
-                                <input class="form-control" v-model="data.jurisdiction_id" id="jurisdiction_id"
-                                       type="hidden" name="jurisdiction_id" value="{{ $jurisdiction->id }}">
-                            </div>
                             {!! csrf_field() !!}
 
                             <div class="form-group">
                                 <label for="title">Title</label>
-                                <textarea class="form-control" cols="3" id="title" type="text" name="title" v-model="data.title">{{ $ticket->title }}</textarea>
+
+                                <textarea class="form-control" cols="3" id="title" type="text" name="title"
+                                          v-model="data.title"></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="body">Body</label>
 
                                 <textarea class="form-control" cols="3" id="body" type="text" name="body"
-                                          v-model="data.body">{{ $ticket->body }}</textarea>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="finish_by">Finish by (optional)</label>
-
-                                <input class="form-control" id="finish_by" type="text" name="finish_by"
-                                       v-model="data.finish_by" value="{{ date('m-d-Y',strtotime($ticket->finish_by)) }}">
+                                          v-model="data.body"></textarea>
                             </div>
                             <div class="form-group">
+                                <label>Ticket priority</label>
                                 <select id="priority_id" default="" type="select" name="priority_id"
                                         v-model="data.priority_id" class="form-control">
                                     <option value="" disabled selected>Please select a priority to assign this to
                                     </option>
                                     @foreach(\Kregel\Dispatch\Models\Priority::all() as $priority)
-                                        <option value="{{ $priority->id }}" @if($priority->id === $ticket->priority->id)selected @endif>{{ $priority->name }}</option>
+                                        <option value="{{ $priority->id }}">{{ $priority->name }}</option>
                                     @endforeach
                                 </select>
 
                             </div>
-                            @if(empty($jurisdiction))
+                            <div class="form-group">
+                                <label for="finish_by">Finish by (optional)</label>
+
+                                <input class="form-control" id="finish_by" type="date" name="finish_by"
+                                       v-model="data.finish_by">
+                            </div>
+                            @if(!empty($jurisdiction))
                                 <div class="form-group">
-                                    <select multiple id="jurisdiction" name="jurisdiction_id"[] v-model="data.jurisdiction_id">
+                                    <select multiple id="jurisdiction" v-model="data.jurisdiction_id" class="form-control" name="jurisdiction_id">
                                         <option value="" disabled selected>Please assign this to a location</option>
-                                        @foreach(auth()->user()->jurisdiction as $jurisdiction)
-                                            <option value="{{ $jurisdiction->id }}"  @if($jurisdiction->id === $ticket->jurisdiction->id)selected @endif>{{ $jurisdiction->name }}</option>
+                                        @foreach($jurisdiction as $j)
+                                            <option value="{{ $j->id }}">{{ $j->name }}</option>
                                         @endforeach
 
-                                    </select>
-                                </div>
-                            @endif
-                            @if(auth()->user()->can_assign())
-                                <div class="form-group">
-                                    <select multiple id="assign_to" class="form-control" name="assign_to[]" v-model="data.assign_to">
-                                        <option value="" disabled selected>Please assign a user or two</option>
-                                        @foreach($jurisdiction->users as $user)
-                                            <option value="{{ $user->id }}" @if($ticket->assign_to->contains($user->id))selected @endif>{{ $user->name }}</option>
-                                        @endforeach
                                     </select>
                                 </div>
                             @endif
@@ -98,5 +83,4 @@
                 </div>
             </div>
         </div>
-
-@endsection
+    </div>@endsection

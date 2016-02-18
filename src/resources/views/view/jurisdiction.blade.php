@@ -1,7 +1,7 @@
 @extends(config('kregel.dispatch.view-base'))
 @section('content')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.11/vue.js"></script>
-
+    @include('dispatch::header', ['header' => 'Showing Jurisdictions'])
     <div class="container spark-screen">
         <div class="row">
             <div class="col-md-4">
@@ -9,9 +9,6 @@
             </div>
             <div class="col-md-8">
                 <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Showing Jurisdictions
-                    </div>
                     <div class="panel-body">
                         @include('dispatch::shared.errors')
                         <table class="table" id="searchable">

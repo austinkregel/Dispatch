@@ -4,6 +4,7 @@ namespace Kregel\Dispatch;
 
 use Kregel\Dispatch\Commands\CheckTickets;
 use Illuminate\Support\ServiceProvider;
+use Kregel\Dispatch\Commands\EmailTicketInfo;
 use Kregel\Dispatch\Models\Jurisdiction;
 use Kregel\Dispatch\Models\Ticket;
 
@@ -33,7 +34,7 @@ class Dispatch extends ServiceProvider
         $this->commands('command.dispatch.check.jurisdiction');
         // Register some commands here...
         $this->app->singleton('command.dispatch.email.tickets', function ($app) {
-            return new CheckTickets();
+            return new  EmailTicketInfo(Ticket::findOrNew(2));
         });
         $this->commands('command.dispatch.email.tickets');
     }
@@ -57,16 +58,16 @@ class Dispatch extends ServiceProvider
             __DIR__.'/../config/config.php' => config_path('kregel/dispatch.php'),
         ], 'config');
 
-        Ticket::updating(function ($ticket) {
-            $ticket->adjust();
-            $ticket->mailUsersUpdate();
-        });
-        Ticket::created(function($ticket){
-            // We need to update the owner of the ticket,
-            // Those who are assigned to it, and those
-            // who commented on it of the new ticket
-            $ticket->mailUsers();
-        });
+        //Ticket::updating(function ($ticket) {
+        //    $ticket->adjust();
+        //    $ticket->mailUsersUpdate();
+        //});
+        //Ticket::created(function($ticket){
+        //    // We need to update the owner of the ticket,
+        //    // Those who are assigned to it, and those
+        //    // who commented on it of the new ticket
+        //    $ticket->mailUsers();
+        //});
     }
 
 

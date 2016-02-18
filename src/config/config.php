@@ -7,7 +7,7 @@ return [
         'ticket' => Kregel\Dispatch\Models\Ticket::class,
         'jurisdiction' => Kregel\Dispatch\Models\Jurisdiction::class,
     ],
-    'color' => '',
+    'color' => 'e57373',
     'mail' => [
         'from' => [
             'address' => null,

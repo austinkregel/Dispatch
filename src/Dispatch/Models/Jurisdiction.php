@@ -42,7 +42,7 @@ class Jurisdiction extends Model
 
     public function users()
     {
-        return $this->belongsToMany(\App\Models\User::class, 'dispatch_jurisdiction_user', 'user_id', 'jurisdiction_id');
+        return $this->belongsToMany(\App\Models\User::class, 'dispatch_jurisdiction_user', 'jurisdiction_id','user_id');
     }
 
     public function tickets()

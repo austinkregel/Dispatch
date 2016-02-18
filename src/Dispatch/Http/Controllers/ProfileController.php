@@ -4,7 +4,7 @@ namespace Kregel\Dispatch\Http\Controllers;
 
 class ProfileController extends Controller
 {
-    public function viewProfile($id, $name)
+    public function viewProfile($id, $name = null)
     {
         $user_model = config('auth.model');
         $user = $user_model::find($id);
@@ -14,6 +14,8 @@ class ProfileController extends Controller
                 return 'There are too many users with your name. Your user id is incorrect....';
             }
         }
+        if(empty($name))
+            return redirect( route('dispatch::'.config('kregel.auth-login.profile.route').'.user', [$user->id, str_slug($user->name)]));
         //This line should be limited to admins+ not include contacts / maintence.
         $tickets = $user->tickets()->orderBy('created_at')->limit(5)->get();
         //grab the user's assigned tickets.

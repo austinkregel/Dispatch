@@ -16,12 +16,13 @@ class Ticket extends Model
         'priority_id',
         'owner_id',
         'jurisdiction_id',
+        'finish_by',
         'closer_id',
     ];
 
     protected $table = 'dispatch_tickets';
 
-    protected $dates = ['deleted_at'];
+    protected $dates = ['deleted_at', 'finish_by'];
     protected $hidden = [
         'owner_id', 'closer_id'
     ];

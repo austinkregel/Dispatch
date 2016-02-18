@@ -21,7 +21,7 @@
                             <li>
                                 <a href="{{ route('dispatch::view.ticket', [str_slug($jur->name)]) }}"
                                    class="p-link">
-                                    <i class="fa fa-btn fa-fw fa-cog"></i>New {{ $jur->name }}
+                                    <i class="fa fa-btn fa-fw fa-cog"></i>View {{ $jur->name }}
                                     @if(!$jur->tickets->isEmpty())
                                         <span class="badge text-right" style="color:white;">{{ $jur->tickets->count( )}}</span>
                                     @endif
@@ -37,12 +37,9 @@
                     <ul class="dropdown-menu">
                         @foreach (auth()->user()->jurisdiction as $jur)
                             <li>
-                                <a href="{{ route('dispatch::new.jurisdiction', [str_slug($jur->name)]) }}"
+                                <a href="{{ route('dispatch::edit.jurisdiction', [str_slug($jur->name)]) }}"
                                    class="p-link">
-                                    <i class="fa fa-btn fa-fw fa-cog"></i>New {{ $jur->name }}
-                                    @if(!$jur->tickets->isEmpty())
-                                        <span class="badge text-right" style="color:white;">{{ $jur->users->count( )}}</span>
-                                    @endif
+                                    <i class="fa fa-btn fa-fw fa-cog"></i>Edit {{ $jur->name }}
                                 </a>
                             </li>
                         @endforeach

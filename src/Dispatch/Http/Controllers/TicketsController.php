@@ -58,8 +58,8 @@ class TicketsController extends Controller
                 ]);
             }
 
-            return view('dispatch::create.ticket')->with([
-                'jurisdiction' => $jurisdictions->first(),
+            return view('dispatch::create.ticket-multilocation')->with([
+                'jurisdiction' => $jurisdictions,
                 'form'         => $form,
                 'form_'        => $form_submit
             ]);
@@ -86,14 +86,14 @@ class TicketsController extends Controller
 
         //This line should be limited to admins+ not include contacts / maintence.
         $tickets = auth()->user()->tickets()->where('jurisdiction_id',
-            $jurisdiction->id)->orderBy('created_at')->orderBy('priority_id')->get();
+            $jurisdiction->id)->orderBy('created_at')->orderBy('priority_id')->paginate(25);
 
         //grab the user's assigned tickets.
         $tickets_    = auth()->user()->assigned_tickets()->where('jurisdiction_id',
-            $jurisdiction->id)->orderBy('created_at')->orderBy('priority_id')->get();
+            $jurisdiction->id)->orderBy('created_at')->orderBy('priority_id')->paginate(25);
         $sum_tickets = $tickets->merge($tickets_)->sortBy('created_at')->sortBy('priority_id');
 
-        return view('dispatch::view.ticket')->with(compact('jurisdiction'))->withTickets($sum_tickets);
+        return view('dispatch::view.ticket')->with(compact('jurisdiction'))->withTickets($tickets);
     }
 
 

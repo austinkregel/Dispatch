@@ -36,10 +36,10 @@ class EmailTicketInfo extends Command implements SelfHandling
     protected $ticket;
     protected $users;
 
-    public function __construct(Ticket $ticket)
+    public function __construct()
     {
         parent::__construct();
-        $this->ticket = $ticket;
+        $this->ticket = new Ticket;
     }
 
 

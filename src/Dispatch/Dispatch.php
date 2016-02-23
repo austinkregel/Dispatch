@@ -34,7 +34,7 @@ class Dispatch extends ServiceProvider
         $this->commands('command.dispatch.check.jurisdiction');
         // Register some commands here...
         $this->app->singleton('command.dispatch.email.tickets', function ($app) {
-            return new  EmailTicketInfo(Ticket::findOrNew(2));
+            return new  EmailTicketInfo();
         });
         $this->commands('command.dispatch.email.tickets');
     }

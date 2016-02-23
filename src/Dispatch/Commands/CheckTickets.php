@@ -81,8 +81,8 @@ class CheckTickets extends Command implements SelfHandling
 
         $tickets_week = Ticket::whereDate('finish_by', '<=', date('Y-m-d', strtotime('+1 week')) )->get();
         dd([
-            'tickets this month, but not this week' =>$tickets_month->count(),
-            'tickets this week' => $tickets_week->count(),
+            'tickets this month, but not this week' =>$tickets_month,
+            'tickets this week' => $tickets_week,
             'Now' => $date,
             'Now plus a week' => date('Y-m-d', strtotime('+1 week')),
             'is_fake' => $this->is_fake

@@ -5,6 +5,7 @@ namespace Kregel\Dispatch;
 use Kregel\Dispatch\Commands\CheckTickets;
 use Illuminate\Support\ServiceProvider;
 use Kregel\Dispatch\Commands\EmailTicketInfo;
+use Kregel\Dispatch\Commands\SendEmails;
 use Kregel\Dispatch\Models\Jurisdiction;
 use Kregel\Dispatch\Models\Ticket;
 
@@ -28,10 +29,10 @@ class Dispatch extends ServiceProvider
         });
         $this->commands('command.dispatch.check.tickets');
         // Register some commands here...
-        $this->app->singleton('command.dispatch.check.jurisdiction', function ($app) {
-            return new CheckTickets();
+        $this->app->singleton('command.dispatch.send.emails', function ($app) {
+            return new SendEmails();
         });
-        $this->commands('command.dispatch.check.jurisdiction');
+        $this->commands('command.dispatch.send.emails');
         // Register some commands here...
         $this->app->singleton('command.dispatch.email.tickets', function ($app) {
             return new  EmailTicketInfo();

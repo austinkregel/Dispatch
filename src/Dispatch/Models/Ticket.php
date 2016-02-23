@@ -4,7 +4,9 @@ namespace Kregel\Dispatch\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Kregel\Dispatch\Commands\SendEmails;
 use Kregel\Warden\Traits\Wardenable;
+use Mail;
 
 class Ticket extends Model
 {
@@ -21,11 +23,29 @@ class Ticket extends Model
     ];
 
     protected $table = 'dispatch_tickets';
-
     protected $dates = ['deleted_at', 'finish_by'];
     protected $hidden = [
         'owner_id', 'closer_id'
     ];
+
+    public static function boot()
+    {
+
+        self::updated(function (Ticket $ticket) {
+            $ticket->sendEmail('update');
+
+        });
+        self::created(function (Ticket $ticket) {
+            $ticket->sendEmail('new');
+        });
+    }
+
+    public function sendEmail($type){
+        \Artisan::queue('dispatch:send-mail', [
+            'ticket' => $this->id, '--type' => $type
+        ]);
+    }
+
 
     public function owner()
     {
@@ -66,7 +86,7 @@ class Ticket extends Model
     public function adjust($userId = null, $diff = null)
     {
         $userId = $userId ?: auth()->user()->id;
-        $diff   = $diff ?: $this->getDiff();
+        $diff = $diff ?: $this->getDiff();
 
         return $this->adjustments()->attach($userId, $diff);
     }
@@ -75,9 +95,9 @@ class Ticket extends Model
     public function getDiff()
     {
         $changed = $this->getDirty();
-        $before  = json_encode(array_intersect($this->fresh()->toArray(), $changed));
-        $after   = json_encode($changed);
-        $hash    = sha1($this);
+        $before = json_encode(array_intersect($this->fresh()->toArray(), $changed));
+        $after = json_encode($changed);
+        $hash = sha1($this);
 
         return compact('before', 'after', 'hash');
     }
@@ -86,20 +106,24 @@ class Ticket extends Model
     public function adjustments()
     {
         return $this->belongsToMany(config('auth.model'), 'dispatch_ticket_edits')->withTimestamps()->withPivot([
-                'before',
-                'after',
-                'hash'
-            ])->latest('pivot_updated_at');
+            'before',
+            'after',
+            'hash'
+        ])->latest('pivot_updated_at');
     }
 
-    public function mailUsers(){
+    public function mailUsers()
+    {
         $assigned_users = $this->getEmailList();
     }
-    public function mailUsersUpdate(){
+
+    public function mailUsersUpdate()
+    {
 
     }
 
-    private function getEmailList(){
+    private function getEmailList()
+    {
         $emails = $this->assign_to()->select('email')->get()->toArray();
     }
 }

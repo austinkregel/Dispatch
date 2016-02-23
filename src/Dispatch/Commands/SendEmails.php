@@ -108,9 +108,8 @@ class SendEmails extends Command implements SelfHandling
         $this->info("Message sent to the ticket owner!");
     }
 
-    private function comments($subject, $message = ''){
-        $this->info("Message sent to the subscribered users!");
-
+    private function commented($subject, $message = ''){
+        $this->info("Message sent to the subscribers user!");
     }
     /**
      * This will do the needed matching for the type of ticket creation and the
@@ -142,14 +141,14 @@ class SendEmails extends Command implements SelfHandling
         $this->owner('Your Ticket has been reassigned');
         $this->assigned('A ticket you are assigned to has been reassigned');
 //        $this->oldAssigned('You have been removed from the ticket');
-        $this->comments('A ticket you are subscribed to has been reassigned');
+        $this->commented('A ticket you are subscribed to has been reassigned');
     }
 
     private function updatedTicket()
     {
         $this->owner('Your ticket has been updated!');
         $this->assigned('A ticket you are assigned to has been updated');
-        $this->comments('A ticket you are subscribed to has been updated');
+        $this->commented('A ticket you are subscribed to has been updated');
 //        $this->oldAssigned('You have been removed from the ticket');
 
     }

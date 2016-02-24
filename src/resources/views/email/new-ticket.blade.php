@@ -18,7 +18,7 @@
 </head>
 <body>
 <div class="full">
-    <p>{!! $message !!}}</p>
+    <p>{!! ($msg) !!}}</p>
     <p>Thank you<br/>
         Say Computer<br/>
         989-720-2556</p>

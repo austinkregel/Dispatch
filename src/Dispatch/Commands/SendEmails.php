@@ -60,8 +60,10 @@ class SendEmails extends Command implements SelfHandling
     {
         if (is_numeric($this->option('ticket'))) {
             $this->ticket = Ticket::find($this->option('ticket'));
+            $this->jumpThroughTickets();
+        } else {
+            $this->error('You didn\'t declare a valid ticket id');
         }
-        $this->jumpThroughTickets();
     }
 
     /**
@@ -69,15 +71,16 @@ class SendEmails extends Command implements SelfHandling
      * @param $subject
      * @param string $message
      */
-    private function assigned($subject, $message = 'Hey $owner,EOL Just wanted to let you know you have a new ticket.')
+    private function assigned($subject, $msg = 'Hey $owner,EOL Just wanted to let you know you have a new ticket.')
     {
         $users = $this->ticket->assign_to;
-        $data = [
-            'message' => str_replace('$owner', 'Assigned user', str_replace('EOL', '<br/>', $message))
+        $msg  = [
+            'msg' => str_replace('$owner', 'Assigned user', str_replace('EOL', '<br/>', $msg ))
         ];
         if (!empty($users)) {
             foreach ($users as $user) {
-                Mail::queue('dispatch::email.new-ticket', $data, function ($message) use ($subject, $user) {
+
+                Mail::queue('dispatch::email.new-ticket', $msg + ['user' => $user] , function ($message) use ($subject, $user) {
                     $message->subject($subject);
                     $message->to($user->email, $user->name);
                 });
@@ -96,12 +99,12 @@ class SendEmails extends Command implements SelfHandling
     {
         $user = $this->ticket->owner;
         $message = str_replace('$owner', htmlentities($user->name), str_replace('EOL', '<br/>', $message));
-        $data = [
-            'message' => $message,
+        $msg  = [
+            'msg' => str_replace('$owner', 'Assigned user', str_replace('EOL', '<br/>', $message )),
             'user' => $user
         ];
 
-        Mail::queue('dispatch::email.new-ticket', $data, function ($message) use ($subject, $user) {
+        Mail::queue('dispatch::email.new-ticket', $msg, function ($message) use ($subject, $user) {
             $message->subject($subject);
             $message->to($user->email, $user->name);
         });

@@ -73,19 +73,16 @@ class SendEmails extends Command implements SelfHandling
      */
     private function assigned($subject, $msg = 'Hey $owner,EOL Just wanted to let you know you have a new ticket.')
     {
-        $users = $this->ticket->assign_to;
+        $users = $this->ticket->assign_to->unique();
         $msg  = [
             'msg' => str_replace('$owner', 'Assigned user', str_replace('EOL', '<br/>', $msg ))
         ];
         if (!empty($users)) {
             foreach ($users as $user) {
-
                 Mail::queue('dispatch::email.new-ticket', $msg + ['user' => $user] , function ($message) use ($subject, $user) {
                     $message->subject($subject);
                     $message->to($user->email, $user->name);
                 });
-                $this->info("Message sent to the assigned user!");
-
             }
         }
     }
@@ -108,11 +105,22 @@ class SendEmails extends Command implements SelfHandling
             $message->subject($subject);
             $message->to($user->email, $user->name);
         });
-        $this->info("Message sent to the ticket owner!");
     }
 
-    private function commented($subject, $message = ''){
-        $this->info("Message sent to the subscribers user!");
+    private function commented($subject, $msg = ''){
+        $users = $this->ticket->assign_to->unique();
+        $msg  = [
+            'msg' => str_replace('$owner', 'Assigned user', str_replace('EOL', '<br/>', $msg ))
+        ];
+        if (!empty($users)) {
+            foreach ($users as $user) {
+                Mail::queue('dispatch::email.new-ticket', $msg + ['user' => $user] , function ($message) use ($subject, $user) {
+                    $message->subject($subject);
+                    $message->to($user->email, $user->name);
+                });
+            }
+        }
+
     }
     /**
      * This will do the needed matching for the type of ticket creation and the
@@ -130,7 +138,16 @@ class SendEmails extends Command implements SelfHandling
             case 'update':
                 $this->updatedTicket();
                 break;
+            case 'comment':
+                $this->newComment();
+                break;
         }
+    }
+
+    private function newComment(){
+        $this->owner('New comment on your ticket!');
+        $this->assigned('New comment on a ticket you are assigned to!' );
+        $this->commented('New comment on a ticket you are subscribed to!');
     }
 
     private function newTicket()

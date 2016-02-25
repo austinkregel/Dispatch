@@ -1,6 +1,6 @@
 @extends(config('kregel.dispatch.view-base'))
 @section('content')
-    <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
     @include('dispatch::header', ['header' => !empty($jurisdiction)?'Edit a ticket for '.$jurisdiction->name:'Edit a ticket'])

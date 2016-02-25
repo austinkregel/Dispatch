@@ -52,7 +52,7 @@
                                 <label for="finish_by">Finish by (optional)</label>
 
                                 <input class="form-control" id="finish_by" type="text" name="finish_by"
-                                       v-model="data.finish_by" value="{{ date('m-d-Y',strtotime($ticket->finish_by)) }}">
+                                       v-model="data.finish_by" value="{{ date('Y-m-d',strtotime($ticket->finish_by)) }}">
                             </div>
                             <div class="form-group">
                                 <select id="priority_id" default="" type="select" name="priority_id"

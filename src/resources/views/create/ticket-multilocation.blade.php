@@ -57,7 +57,7 @@
                             <div class="form-group">
                                 <label for="finish_by">Finish by (optional)</label>
 
-                                <input class="form-control" id="finish_by" type="date" name="finish_by"
+                                <input class="form-control" id="finish_by" type="datetime" name="finish_by"
                                        v-model="data.finish_by">
                             </div>
                             @if(!empty($jurisdiction))

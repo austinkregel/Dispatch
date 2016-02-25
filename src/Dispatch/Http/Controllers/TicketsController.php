@@ -83,7 +83,9 @@ class TicketsController extends Controller
     public function getTicketsForJurisdiction($jurisdiction)
     {
         $jurisdiction = $this->searchJurisdiction($jurisdiction);
-
+        if (empty($jurisdiction)) {
+            return abort(404);
+        }
         //This line should be limited to admins+ not include contacts / maintence.
         $tickets = auth()->user()->tickets()->where('jurisdiction_id',
             $jurisdiction->id)->orderBy('created_at')->orderBy('priority_id')->paginate(25);

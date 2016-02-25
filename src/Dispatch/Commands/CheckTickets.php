@@ -40,6 +40,7 @@ class CheckTickets extends Command implements SelfHandling
     public function __construct()
     {
         parent::__construct();
+
     }
 
 

@@ -21,7 +21,7 @@ Route::group(['prefix' => config('kregel.dispatch.route'), 'as' => 'dispatch::',
 
         Route::get('jurisdictions', ['as' => 'jurisdiction', 'uses' => 'JurisdictionController@viewAll']);
     });
-    Route::group(['as' => 'edit.'],function (){
+    Route::group(['as' => 'edit.'], function () {
         Route::get('ticket/{name}/{id}/edit', ['as' => 'ticket', 'uses' => 'TicketsController@getTicketFromJurisdictionForEdit']);
         Route::get('jurisdiction/{place?}', ['as' => 'jurisdiction', 'uses' => 'JurisdictionController@getJurisdictionForEdit']);
 
@@ -30,4 +30,5 @@ Route::group(['prefix' => config('kregel.dispatch.route'), 'as' => 'dispatch::',
         Route::get('{id}/{name?}', ['as' => 'user', 'uses' => 'ProfileController@viewProfile']);
 
     });
+
 });

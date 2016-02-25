@@ -30,7 +30,6 @@ class Ticket extends Model
 
     public static function boot()
     {
-
         self::updated(function (Ticket $ticket) {
             $ticket->sendEmail('update');
 
@@ -42,7 +41,7 @@ class Ticket extends Model
 
     public function sendEmail($type){
         \Artisan::queue('dispatch:send-mail', [
-            'ticket' => $this->id, '--type' => $type
+            '--ticket' => $this->id, '--type' => $type
         ]);
     }
 
@@ -115,11 +114,6 @@ class Ticket extends Model
     public function mailUsers()
     {
         $assigned_users = $this->getEmailList();
-    }
-
-    public function mailUsersUpdate()
-    {
-
     }
 
     private function getEmailList()

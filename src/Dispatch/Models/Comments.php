@@ -18,6 +18,22 @@ class Comments extends Model
 
     protected $table = 'dispatch_ticket_comments';
 
+    public static function boot()
+    {
+        self::updated(function (Comments $c) {
+            $c->sendEmail();
+        });
+        self::created(function (Comments $c) {
+            $c->sendEmail();
+        });
+    }
+
+    public function sendEmail(){
+        \Artisan::queue('dispatch:send-mail', [
+            '--ticket' => $this->ticket_id, '--type' => 'comment'
+        ]);
+    }
+
     public function user()
     {
         return $this->belongsTo(\App\Models\User::class);

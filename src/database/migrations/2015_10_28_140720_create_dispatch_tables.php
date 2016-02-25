@@ -30,7 +30,7 @@ class CreateDispatchTables extends Migration
             // We need to be able to attach media to a ticket.
             $table->integer('owner_id')->unsigned()->index(); // Need to know who made the ticket
             $table->integer('closer_id')->unsigned()->nullable(); // If the ticket is closed, who closed it.
-            $table->timestamp('finish_by')->nullable();
+            $table->datetime('finish_by')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

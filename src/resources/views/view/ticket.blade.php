@@ -40,9 +40,16 @@
                                             {{$ticket->title}} &mdash; Priority {{ $ticket->priority->name }}
                                         </a>
                                         <div class="ticket-action close-ticket">
-                                            <a href="{{ route('dispatch::edit.ticket', [str_slug($ticket->jurisdiction->name), $ticket->id]) }}">
-                                                <i class="fa fa-times"></i>
-                                            </a>
+                                            <span style="text-align:right;float:right; font-size:24px;padding-right:10px;">
+                                            <form action="{{ route('warden::api.delete-model', ['ticket', $ticket->id]) }}" method='post'>
+                                                {!! method_field('delete') !!}
+                                                {!! csrf_field() !!}
+                                                <input type="hidden" name="_redirect" value="{{ route('dispatch::view.ticket', [str_slug($jurisdiction->name)]) }}">
+                                                <button type="submit" class="method-button">
+                                                    <i class="@if(config('kregel.warden.using.fontawesome') === true) fa fa-trash-o @else glyphicon glyphicon-trash @endif"></i>
+                                                </button>
+                                            </form>
+                                        </span>
                                         </div>
                                         <div class="ticket-action edit-ticket">
                                             <a href="{{ route('dispatch::edit.ticket', [str_slug($ticket->jurisdiction->name), $ticket->id]) }}">
@@ -52,7 +59,7 @@
                                     </h4>
                                     <div style="width:calc(100% - 20px); margin:10px;line-height:2rem;">
                                         <span class="badge customize">Created: {{ date('M d, Y H:i', strtotime($ticket->created_at)) }}</span>
-                                        <span class="badge customize">Tentative: {{ date('M d, Y', strtotime($ticket->finish_by)) }}</span>
+                                        <span class="badge customize">Tentative: {{ date('M d, Y', strtotime((!!$ticket->finish_by)?$ticket->finish_by:$ticket->priority->deadline)) }}</span>
                                         @if($ticket->comments->count() > 0)
                                         <span class="badge customize amber">{{ $ticket->comments->count() }} comments</span>
                                         @endif

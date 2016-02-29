@@ -12,13 +12,13 @@
                 highlightStroke: "rgba(220,220,220,1)",
                 data : [
                     {{
-                        Kregel\Dispatch\Models\Ticket::whereRaw('MONTH(created_at) = ?', [date('m', strtotime('-2 months'))], 'and')->get()->count()
+                        Kregel\Dispatch\Models\Ticket::whereRaw('deleted_at is null and MONTH(created_at) = ?', [date('m', strtotime('-2 months'))])->get()->count()
                     }},
                     {{
-                        Kregel\Dispatch\Models\Ticket::whereRaw('MONTH(created_at) = ?', [date('m', strtotime('-1 month'))], 'and')->get()->count()
+                        Kregel\Dispatch\Models\Ticket::whereRaw('deleted_at is null and MONTH(created_at) = ?', [date('m', strtotime('-1 month'))])->get()->count()
                     }},
                     {{
-                        Kregel\Dispatch\Models\Ticket::whereRaw('MONTH(created_at) = ?', [date('m', strtotime('now'))], 'and')->get()->count()
+                        Kregel\Dispatch\Models\Ticket::whereRaw('deleted_at is null and MONTH(created_at) = ?', [date('m', strtotime('now'))])->get()->count()
                     }}
                 ]
             },
@@ -29,13 +29,13 @@
                 highlightStroke: "rgba(10,220,10,1)",
                 data : [
                     {{
-                        Kregel\Dispatch\Models\Ticket::whereRaw('MONTH(deleted_at) = ?', [date('m', strtotime('-2 months'))], 'and')->get()->count()
+                        Kregel\Dispatch\Models\Ticket::whereRaw('deleted_at is not null and MONTH(deleted_at) = ?', [date('m', strtotime('-2 months'))])->get()->count()
                     }},
                     {{
-                        Kregel\Dispatch\Models\Ticket::whereRaw('MONTH(deleted_at) = ?', [date('m', strtotime('-1 month'))], 'and')->get()->count()
+                        Kregel\Dispatch\Models\Ticket::whereRaw('deleted_at is not null and MONTH(deleted_at) = ?', [date('m', strtotime('-1 month'))])->get()->count()
                     }},
                     {{
-                        Kregel\Dispatch\Models\Ticket::whereRaw('MONTH(deleted_at) = ?', [date('m', strtotime('now'))], 'and')->get()->count()
+                        Kregel\Dispatch\Models\Ticket::whereRaw('deleted_at is not null and MONTH(deleted_at) = ?', [date('m', strtotime('now'))])->get()->count()
                     }}
                 ]
             }
@@ -58,20 +58,13 @@
         <div class="col-md-8">
             @include('dispatch::shared.errors')
             <div class="well white z-offset-2">
-                <div class="card-image">
-                    <div class="center">
-                        <div style="padding:10px;overflow:hidden;width:calc(100% - 10px);">
-                            <canvas id="canvas" width="400" height="200"></canvas>
-                        </div>
+                <div class="center">
+                    <div style="padding:10px;overflow:hidden;width:calc(100% - 10px);">
+                        <canvas id="canvas" width="400" height="200"></canvas>
                     </div>
-                    <span class="card-title">Ticket Creation</span>
-                </div>
-                <div class="card-content">
-                    <span class="card-title activator grey-text text-darken-4">Ticket Creation<i class="material-icons right">more_vert</i></span>
-                    <p><a href="#">Explore more</a></p>
                 </div>
                 <div class="card-reveal">
-                    <span class="card-title grey-text text-darken-4">Ticket Creation<i class="material-icons right">close</i></span>
+                    <h2 class="card-title grey-text text-darken-4">Ticket Creation<i class="material-icons right">close</i></h2>
                     <p>These are the total number of tickets created and closed in the past 3 months for this website.</p>
                 </div>
             </div>

@@ -76,7 +76,7 @@
                             </div>
                             @if(empty($jurisdiction))
                                 <div class="form-group">
-                                    <select multiple id="jurisdiction" v-model="data.jurisdiction_id">
+                                    <select id="jurisdiction" v-model="data.jurisdiction_id">
                                         <option value="" disabled selected>Please assign this to a location</option>
                                         @foreach(auth()->user()->jurisdiction as $jurisdiction)
                                             <option value="{{ $jurisdiction->id }}">{{ $jurisdiction->name }}</option>

@@ -37,6 +37,10 @@ class Ticket extends Model
         self::created(function (Ticket $ticket) {
             $ticket->sendEmail('new');
         });
+        self::deleting(function(Ticket $ticket) {
+            $ticket->closer_id = auth()->user()->id;
+            $ticket->save();
+        });
     }
 
     public function sendEmail($type){

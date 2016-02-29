@@ -18,8 +18,12 @@ Route::group(['prefix' => config('kregel.dispatch.route'), 'as' => 'dispatch::',
         Route::get('tickets', ['as' => 'tickets', 'uses' => 'TicketsController@viewAll']);
         Route::get('ticket/{name}', ['as' => 'ticket', 'uses' => 'TicketsController@getTicketsForJurisdiction']);
         Route::get('ticket/{name}/{id}', ['as' => 'ticket-single', 'uses' => 'TicketsController@getTicketFromJurisdiction']);
-
         Route::get('jurisdictions', ['as' => 'jurisdiction', 'uses' => 'JurisdictionController@viewAll']);
+
+        Route::group(['as' => 'closed'], function(){
+            Route::get('closed/{name}', ['as' => 'tickets', 'uses' => 'TicketsController@getClosedTicketsFromJurisdiction']);
+
+        });
     });
     Route::group(['as' => 'edit.'], function () {
         Route::get('ticket/{name}/{id}/edit', ['as' => 'ticket', 'uses' => 'TicketsController@getTicketFromJurisdictionForEdit']);
@@ -28,7 +32,5 @@ Route::group(['prefix' => config('kregel.dispatch.route'), 'as' => 'dispatch::',
     });
     Route::group(['as' => 'profile.', 'prefix' => config('kregel.auth-login.profile.route')], function () {
         Route::get('{id}/{name?}', ['as' => 'user', 'uses' => 'ProfileController@viewProfile']);
-
     });
-
 });

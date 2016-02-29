@@ -33,24 +33,24 @@ class TicketsController extends Controller
      */
     public function __construct(FormModel $form)
     {
-        $this->form         = $form;
-        $this->ticket       = config('kregel.dispatch.models.ticket');
+        $this->form = $form;
+        $this->ticket = config('kregel.dispatch.models.ticket');
         $this->jurisdiction = config('kregel.dispatch.models.jurisdiction');
     }
 
 
     public function create($jurisdiction = null)
     {
-        if ( ! auth()->user()->can('create-ticket')) {
+        if (!auth()->user()->can('create-ticket')) {
             return response(view('errors.403')->withMessage('Sorry, but it looks like'), 403);
         }
-        $form        = $this->form->using(config('kregel.formmodel.using.framework'))->withModel(new $this->ticket)->submitTo(route('warden::api.create-model',
-            [ 'ticket' ]));
+        $form = $this->form->using(config('kregel.formmodel.using.framework'))->withModel(new $this->ticket)->submitTo(route('warden::api.create-model',
+            ['ticket']));
         $form_submit = $form->form([
-            'method'  => 'post',
+            'method' => 'post',
             'enctype' => 'multipart/form-data',
         ]);
-        if (empty( $jurisdiction )) {
+        if (empty($jurisdiction)) {
             $jurisdictions = auth()->user()->jurisdiction;
             if ($jurisdictions->isEmpty()) {
                 return view('dispatch::home')->withErrors([
@@ -60,16 +60,16 @@ class TicketsController extends Controller
 
             return view('dispatch::create.ticket-multilocation')->with([
                 'jurisdiction' => $jurisdictions,
-                'form'         => $form,
-                'form_'        => $form_submit
+                'form' => $form,
+                'form_' => $form_submit
             ]);
         }
         $jurisdiction = Jurisdiction::whereName($jurisdiction)->get();
 
         return view('dispatch::create.ticket')->with([
             'jurisdiction' => $jurisdiction->first(),
-            'form'         => $form,
-            'form_'        => $form_submit
+            'form' => $form,
+            'form_' => $form_submit
         ]);
     }
 
@@ -88,11 +88,11 @@ class TicketsController extends Controller
         }
         //This line should be limited to admins+ not include contacts / maintence.
         $tickets = auth()->user()->tickets()->where('jurisdiction_id',
-            $jurisdiction->id)->orderBy('created_at')->orderBy('priority_id')->paginate(25);
+            $jurisdiction->id)->orderBy('created_at')->orderBy('priority_id')->where('deleted_at', NULL)->paginate(25);
 
         //grab the user's assigned tickets.
-        $tickets_    = auth()->user()->assigned_tickets()->where('jurisdiction_id',
-            $jurisdiction->id)->orderBy('created_at')->orderBy('priority_id')->paginate(25);
+        $tickets_ = auth()->user()->assigned_tickets()->where('jurisdiction_id',
+            $jurisdiction->id)->orderBy('created_at')->orderBy('priority_id')->where('deleted_at', NULL)->paginate(25);
         $sum_tickets = $tickets->merge($tickets_)->sortBy('created_at')->sortBy('priority_id');
 
         return view('dispatch::view.ticket')->with(compact('jurisdiction'))->withTickets($tickets);
@@ -113,8 +113,8 @@ class TicketsController extends Controller
 
         //This line should be limited to admins+ not include contacts / maintence.
         $ticket = $this->getUsersTicket($jurisdiction, $id);
-        if (empty( $ticket->comments )) {
-            return view('dispatch::view.ticket-single-new')->with(compact('jurisdiction'))->withTicket($ticket)->withComments([ ]);
+        if (empty($ticket->comments)) {
+            return view('dispatch::view.ticket-single-new')->with(compact('jurisdiction'))->withTicket($ticket)->withComments([]);
         }
         $comments = $ticket->comments()->orderBy('created_at', 'desc')->get();
 
@@ -124,7 +124,7 @@ class TicketsController extends Controller
 
     private function getUsersTicket($jurisdiction, $id)
     {
-        return $this->getTickets(true)->whereJurisdictionId($jurisdiction->id)->whereId($id)->first();
+        return $this->getTickets(true)->whereJurisdictionId($jurisdiction->id)->whereId($id)->where('deleted_at', NULL)->first();
     }
 
 
@@ -141,27 +141,33 @@ class TicketsController extends Controller
     public function getTicketFromJurisdictionForEdit($jurisdiction, $id)
     {
         $jurisdiction = $this->searchJurisdiction($jurisdiction);
-        $ticket       = $this->getUsersTicket($jurisdiction, $id);
-        $form         = $this->form
-                ->using(config('kregel.formmodel.using.framework'))
-                ->withModel($ticket)
-                ->submitTo(route('warden::api.update-model', [ 'ticket', $ticket->id ]));
-        $form_submit  = $form->form([
-            'method'  => 'put',
+        $ticket = $this->getUsersTicket($jurisdiction, $id);
+        $form = $this->form
+            ->using(config('kregel.formmodel.using.framework'))
+            ->withModel($ticket)
+            ->submitTo(route('warden::api.update-model', ['ticket', $ticket->id]));
+        $form_submit = $form->form([
+            'method' => 'put',
             'enctype' => 'multipart/form-data',
         ]);
 
         return view('dispatch::edit.ticket')->with([
             'jurisdiction' => $jurisdiction,
-            'ticket'       => $ticket,
-            'form'         => $form,
-            'form_'        => $form_submit
+            'ticket' => $ticket,
+            'form' => $form,
+            'form_' => $form_submit
         ]);
     }
 
 
     private function getUserTicket($jurisdiction, $id)
     {
-        return auth()->user()->tickets()->where('jurisdiction_id', $jurisdiction->id)->whereId($id)->first();
+        return auth()->user()->tickets()->where('jurisdiction_id', $jurisdiction->id)->whereId($id)->where('deleted_at', NULL)->first();
+    }
+
+    public function getClosedTicketsFromJurisdiction($jurisdiction)
+    {
+        $jurisdiction = $this->searchJurisdiction($jurisdiction);
+
     }
 }

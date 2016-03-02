@@ -2,11 +2,13 @@
 
 namespace Kregel\Dispatch\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Kregel\Dispatch\Models\Jurisdiction;
+use Kregel\Dispatch\Models\Photos;
 use Kregel\FormModel\FormModel;
-use Auth;
+use Kregel\Warden\Http\Controllers\Controller as WController;
 
-class TicketsController extends Controller
+class TicketsController extends WController
 {
 
     protected $form;
@@ -58,7 +60,7 @@ class TicketsController extends Controller
                 ]);
             }
 
-            return view('dispatch::create.ticket-multilocation')->with([
+            return view('dispatch::create.ticket')->with([
                 'jurisdiction' => $jurisdictions,
                 'form' => $form,
                 'form_' => $form_submit
@@ -133,7 +135,6 @@ class TicketsController extends Controller
         if ($returnAsQueryBuilder) {
             return auth()->user()->tickets();
         }
-
         return auth()->user()->tickets;
     }
 
@@ -159,15 +160,66 @@ class TicketsController extends Controller
         ]);
     }
 
-
-    private function getUserTicket($jurisdiction, $id)
-    {
-        return auth()->user()->tickets()->where('jurisdiction_id', $jurisdiction->id)->whereId($id)->where('deleted_at', NULL)->first();
-    }
-
     public function getClosedTicketsFromJurisdiction($jurisdiction)
     {
         $jurisdiction = $this->searchJurisdiction($jurisdiction);
+        $tickets = $jurisdiction->tickets()->whereRaw('deleted_at is not null')->get();
+        return view('dispatch::view.closed-tickets');
+    }
 
+    public function postTicketCreate($id, Request $request)
+    {
+        $this->validate($request, [
+            'photo' => 'mimes:jpg,jpeg,png,pdf,gif'
+        ]);
+
+        if ($request->hasFile('photo')) {
+            $file = $request->file('photo');
+            $ext = strtolower($file->getClientOriginalExtension());
+            $uuid = uuid(openssl_random_pseudo_bytes(16));
+            $name = $uuid . '.' . $ext;
+            $file->move(storage_path(config('kregel.dispatch.storage_path')), $name);
+
+            $file_path = config('kregel.dispatch.storage_path').$name;
+            switch($ext){
+                case 'png':
+                case 'jpg':
+                case 'jpeg':
+                    $type = 'image';
+                    break;
+                case 'pdf':
+                    $type = 'doc';
+                    break;
+                default:
+                    $type = 'unknown';
+            }
+            Photos::create([
+                'path' => $file_path,
+                'uuid' => $uuid,
+                'ticket_id' => $id,
+                'user_id'  => auth()->user()->id,
+                'type' => $type
+            ]);
+
+            return response()->json([
+                'message' => 'Upload was successful',
+                'code' => 202
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'No file was found',
+            'code' => 422
+        ], 422);
+    }
+
+    public function post($route, $postData = [])
+    {
+        list($params, $data) = $postData;
+        $route = $this->parseRoute($route, $params);
+        $request = Request::create($route, 'POST', $data);
+        $response = Route::dispatch($request);
+
+        return $response;
     }
 }

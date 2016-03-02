@@ -13,6 +13,7 @@ Route::group(['prefix' => config('kregel.dispatch.route'), 'as' => 'dispatch::',
     });
     Route::group(['as' => 'new.', 'prefix' => 'new'], function () {
         Route::get('ticket', ['as' => 'ticket', 'uses' => 'TicketsController@create']);
+        Route::post('ticket-photo/{id}', ['as' => 'ticket-photo', 'uses' => 'TicketsController@postTicketCreate']);
     });
     Route::group(['as' => 'view.'], function () {
         Route::get('tickets', ['as' => 'tickets', 'uses' => 'TicketsController@viewAll']);
@@ -24,7 +25,10 @@ Route::group(['prefix' => config('kregel.dispatch.route'), 'as' => 'dispatch::',
             Route::get('closed/{name}', ['as' => 'tickets', 'uses' => 'TicketsController@getClosedTicketsFromJurisdiction']);
 
         });
+
+        Route::get('media/{uuid}', ['as' => 'media', 'uses' => 'MediaController@showMedia']);
     });
+
     Route::group(['as' => 'edit.'], function () {
         Route::get('ticket/{name}/{id}/edit', ['as' => 'ticket', 'uses' => 'TicketsController@getTicketFromJurisdictionForEdit']);
         Route::get('jurisdiction/{place?}', ['as' => 'jurisdiction', 'uses' => 'JurisdictionController@getJurisdictionForEdit']);

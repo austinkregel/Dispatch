@@ -87,3 +87,6 @@
         </div>
     </div>
 @endif
+<div style="width:100%;display:table;">
+    <a href="@if(redirect()->back()) {{ redirect()->back()->getTargetUrl() }} @endif"class="col-lg-12 col-md-12 col-sm-12 col-xs-12 btn btn-primary" style="display:block;">Back</a>
+</div>

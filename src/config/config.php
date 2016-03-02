@@ -34,5 +34,6 @@ return [
             'lname'
          ]
          */
-    ]
+    ],
+    'storage_path' => storage_path('app/media'),
 ];

@@ -25,6 +25,12 @@ class Jurisdiction extends Model
                 if (!\Auth::user()->jurisdiction->contains($jurisdiction->id)) {
                     \Auth::user()->jurisdiction()->attach($jurisdiction->id);
                 }
+            } else {
+                $user = config('auth.model');
+                $admin_user = $user::find(1);
+                if(!!$admin_user){
+                    $admin_user->jurisdiction()->attach($jurisdiction->id);
+                }
             }
         });
     }

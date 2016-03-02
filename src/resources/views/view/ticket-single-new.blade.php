@@ -71,6 +71,27 @@
                                     </div>
                                 </div>
                             @endif
+                            @if($ticket->hasMedia())
+                                <div class='icon--wrappers'>
+                                    @foreach($ticket->media as $media)
+                                    @if($media->type === 'doc')
+                                            <div class='icons- doc'>
+                                                <div class='desc'>
+                                                    <i class='fa fa-picture-o'></i>
+                                                    <a class='btn btn-primary' href='{{ route('dispatch::view.media', $media->uuid) }}'  data-title="{{ $media->ticket->title }}"></a>
+                                                </div>
+                                            </div>
+                                    @elseif($media->type === 'image')
+                                            <div class='icons- image' style="background:url({{ route('dispatch::view.media', $media->uuid) }}); background-size: cover;">
+                                                <div class='desc'>
+                                                    <i class='fa fa-file-text-o'></i>
+                                                    <a class='btn btn-primary' href='{{ route('dispatch::view.media', $media->uuid) }}' data-toggle="lightbox" data-title="{{ $media->ticket->title }}"></a>
+                                                </div>
+                                            </div>
+                                    @endif
+                                @endforeach
+                                </div>
+                            @endif
                             <div style="padding:20px;">
                                 <ul class="card-wrapper collapsible popout" data-collapsible="accordion">
 

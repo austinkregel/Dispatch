@@ -65,7 +65,6 @@
                             @endif
                             <div style="padding:20px;">
                                 <ul class="card-wrapper collapsible popout" data-collapsible="accordion">
-
                                     @if($ticket->comments->count() > 0)
                                         <li style="margin:10px 22px;"><i>Replies...</i></li>
                                         <?php $comments = $ticket->comments()->orderBy('created_at',

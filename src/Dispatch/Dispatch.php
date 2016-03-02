@@ -56,6 +56,9 @@ class Dispatch extends ServiceProvider
             __DIR__.'/../resources/views' => base_path('resources/views/vendor/dispatch'),
         ], 'views');
         $this->publishes([
+            __DIR__.'/../resources/images' => storage_path('app/media/'),
+        ], 'images');
+        $this->publishes([
             __DIR__.'/../config/config.php' => config_path('kregel/dispatch.php'),
         ], 'config');
 

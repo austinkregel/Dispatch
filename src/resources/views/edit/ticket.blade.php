@@ -1,4 +1,7 @@
 @extends(config('kregel.dispatch.view-base'))
+@section('styles.top')
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/dropzone.css" rel="stylesheet ">
+@endsection
 @section('content')
     <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
 
@@ -93,10 +96,26 @@
                             </div>
 
                         </form>
+                        <span style="width: 10rem;height: 2rem;padding: 1px;"></span>
+                        <h4>Want to upload some photos</h4>
+
+                        <form id="createFormModels" class="dropzone" action="{{ route('dispatch::new.ticket-photo', $ticket->id ) }}" method="POST">
+                            {!! csrf_field() !!}
+                        </form>
                     </div>
 
                 </div>
             </div>
         </div>
 
+@endsection
+@section('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/dropzone.js"></script>
+    <script>
+        Dropzone.options.createFormModels = {
+            paramName: 'photo',
+            maxFilesize: 32,
+            acceptedFiles:'.jpg, .jpeg, .png, .gif, .pdf'
+        }
+    </script>
 @endsection

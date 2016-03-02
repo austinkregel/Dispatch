@@ -19,7 +19,10 @@
     "autoload": {
         "psr-4": {
             "Kregel\\Dispatch\\": "src/Dispatch"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "minimum-stability": "dev",
     "prefer-stable": true

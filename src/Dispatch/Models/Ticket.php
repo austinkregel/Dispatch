@@ -35,6 +35,10 @@ class Ticket extends Model
 
         });
         self::created(function (Ticket $ticket) {
+            if($ticket->finish_by === '0000-00-00 00:00:00'){
+                $ticket->finish_by = date('Y-m-d', strtotime($ticket->priority->deadline));
+                $ticket->save();
+            }
             $ticket->sendEmail('new');
         });
         self::deleting(function(Ticket $ticket) {
@@ -94,6 +98,13 @@ class Ticket extends Model
         return $this->adjustments()->attach($userId, $diff);
     }
 
+    public function media(){
+        return $this->hasMany(Photos::class);
+    }
+
+    public function hasMedia(){
+        return $this->media->count() > 0;
+    }
 
     public function getDiff()
     {

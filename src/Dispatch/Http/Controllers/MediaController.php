@@ -10,6 +10,10 @@ use Kregel\FormModel\FormModel;
 class MediaController extends Controller
 {
     public function showMedia($uuid){
+        if(stripos($uuid, '.') !== false){
+            $tmp  = explode('.', $uuid);
+            $uuid = $tmp[0];
+        }
         $media = Photos::whereUuid($uuid)->first();
         if(empty($media) || $uuid === '159a50e6-5382-4a52-ae94-3f5a4e8f0584'){
             return response()->make(file_get_contents(storage_path('app/media/159a50e6-5382-4a52-ae94-3f5a4e8f0584.jpeg')))->header('Content-type','image/jpeg')->header('Content-length', filesize(storage_path($media->path)));

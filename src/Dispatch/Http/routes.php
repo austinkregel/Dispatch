@@ -13,6 +13,7 @@ Route::group(['prefix' => config('kregel.dispatch.route'), 'as' => 'dispatch::',
     });
     Route::group(['as' => 'new.', 'prefix' => 'new'], function () {
         Route::get('ticket', ['as' => 'ticket', 'uses' => 'TicketsController@create']);
+        Route::get('ticket/{buss_name}', ['as' => 'jurisdiction-ticket', 'uses' => 'TicketsController@create']);
         Route::post('ticket-photo/{id}', ['as' => 'ticket-photo', 'uses' => 'TicketsController@postTicketCreate']);
     });
     Route::group(['as' => 'view.'], function () {

@@ -19,7 +19,7 @@ class CreateDispatchTables extends Migration
 
         Schema::create('dispatch_tickets', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('title'); // This
+            $table->string ('title')->index(); // This
             $table->text('body'); // This is the meat of the ticket.
             // This should be able to describe the whole ticket.
 
@@ -30,7 +30,7 @@ class CreateDispatchTables extends Migration
             // We need to be able to attach media to a ticket.
             $table->integer('owner_id')->unsigned()->index(); // Need to know who made the ticket
             $table->integer('closer_id')->unsigned()->nullable(); // If the ticket is closed, who closed it.
-            $table->datetime('finish_by')->nullable();
+            $table->timestamp('finish_by')->nullable()->index();
             $table->softDeletes();
             $table->timestamps();
         });
@@ -38,7 +38,7 @@ class CreateDispatchTables extends Migration
         Schema::create('dispatch_jurisdiction', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->index();
-            $table->string('phone_number');
+            $table->string('phone_number')->index();
             $table->timestamps();
         });
 
@@ -64,14 +64,15 @@ class CreateDispatchTables extends Migration
         });
         Schema::create('dispatch_ticket_edits', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->unsigned();
-            $table->integer('ticket_id')->unsigned();
+            $table->integer('user_id')->index()->unsigned();
+            $table->integer('ticket_id')->index()->unsigned();
             $table->text('before');
             $table->text('after');
-            $table->string('hash');
+            $table->string('hash')->index();
             $table->timestamps(); // For when it was assigned to the user.
         });
         Schema::create('dispatch_ticket_comments', function (Blueprint $table) {
+            $table->increments('id');
             $table->text('body');
             $table->integer('user_id')->unsigned()->index();
             $table->integer('ticket_id')->unsigned()->index();
@@ -83,12 +84,13 @@ class CreateDispatchTables extends Migration
         // media on the tickets.
         Schema::create('dispatch_ticket_media', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('uuid')->index();
             $table->integer('ticket_id')->unsigned()->index();
             $table->integer('user_id')->unsigned()->index();
-
+            $table->uuid('uuid');
+            $table->string('type');
             // This is the full path of any given media
             $table->text('path');
+            $table->timestamps();
         });
     }
 

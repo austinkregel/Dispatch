@@ -62,10 +62,10 @@ class Dispatch extends ServiceProvider
             __DIR__.'/../config/config.php' => config_path('kregel/dispatch.php'),
         ], 'config');
 
-        //Ticket::updating(function ($ticket) {
-        //    $ticket->adjust();
-        //    $ticket->mailUsersUpdate();
-        //});
+        Ticket::updating(function (Ticket $ticket) {
+            $ticket->adjust();
+//            $ticket->mailUsersUpdate();
+        });
         //Ticket::created(function($ticket){
         //    // We need to update the owner of the ticket,
         //    // Those who are assigned to it, and those

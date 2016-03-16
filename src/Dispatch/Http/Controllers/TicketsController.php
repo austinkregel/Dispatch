@@ -61,15 +61,15 @@ class TicketsController extends WController
             }
 
             return view('dispatch::create.ticket')->with([
-                'jurisdiction' => $jurisdictions,
+                'jurisdictions' => $jurisdictions,
                 'form' => $form,
                 'form_' => $form_submit
             ]);
         }
-        $jurisdiction = Jurisdiction::whereName($jurisdiction)->get();
+        $jurisdiction = $this->searchJurisdiction( $jurisdiction);
 
         return view('dispatch::create.ticket')->with([
-            'jurisdiction' => $jurisdiction->first(),
+            'jurisdiction' => $jurisdiction,
             'form' => $form,
             'form_' => $form_submit
         ]);

@@ -11,7 +11,7 @@ use Mail;
 class Ticket extends Model
 {
 
-    use SoftDeletes, Wardenable;
+    use SoftDeletes;
     protected $fillable = [
         'title',
         'body',
@@ -30,9 +30,11 @@ class Ticket extends Model
 
     public static function boot()
     {
+        self::updating(function(Ticket $ticket){
+//            $ticket->adjust();
+        });
         self::updated(function (Ticket $ticket) {
             $ticket->sendEmail('update');
-
         });
         self::created(function (Ticket $ticket) {
             if($ticket->finish_by === '0000-00-00 00:00:00'){
@@ -108,9 +110,9 @@ class Ticket extends Model
 
     public function getDiff()
     {
-        $changed = $this->getDirty();
-        $before = json_encode(array_intersect($this->fresh()->toArray(), $changed));
-        $after = json_encode($changed);
+        $changed = collect($this->getDirty());
+        $before = collect($this->getOriginal())->diff($this)->toJson();
+        $after =  $changed->toJson();
         $hash = sha1($this);
 
         return compact('before', 'after', 'hash');
@@ -119,11 +121,12 @@ class Ticket extends Model
 
     public function adjustments()
     {
-        return $this->belongsToMany(config('auth.model'), 'dispatch_ticket_edits')->withTimestamps()->withPivot([
-            'before',
-            'after',
-            'hash'
-        ])->latest('pivot_updated_at');
+        return $this->belongsToMany(config('auth.model'), 'dispatch_ticket_edits')
+            ->withTimestamps()->withPivot([
+                'before',
+                'after',
+                'hash'
+            ])->latest('pivot_updated_at');
     }
 
     public function mailUsers()

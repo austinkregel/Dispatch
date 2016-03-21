@@ -20,6 +20,8 @@ class Ticket extends Model
         'jurisdiction_id',
         'finish_by',
         'closer_id',
+        'created_at',
+        'updated_at'
     ];
 
     protected $table = 'dispatch_tickets';
@@ -34,7 +36,7 @@ class Ticket extends Model
 //            $ticket->adjust();
         });
         self::updated(function (Ticket $ticket) {
-            $ticket->sendEmail('update');
+//            $ticket->sendEmail('update');
         });
         self::created(function (Ticket $ticket) {
             if($ticket->finish_by === '0000-00-00 00:00:00'){

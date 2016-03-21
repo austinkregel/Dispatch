@@ -5,6 +5,7 @@ namespace Kregel\Dispatch\Http\Controllers;
 use Illuminate\Http\Request;
 use Kregel\Dispatch\Models\Jurisdiction;
 use Kregel\Dispatch\Models\Photos;
+use Kregel\Dispatch\Models\Ticket;
 use Kregel\FormModel\FormModel;
 use Kregel\Warden\Http\Controllers\Controller as WController;
 
@@ -53,7 +54,10 @@ class TicketsController extends WController
             'enctype' => 'multipart/form-data',
         ]);
         if (empty($jurisdiction)) {
-            $jurisdictions = auth()->user()->jurisdiction;
+            if(auth()->user()->can_assign())
+                $jurisdictions = Jurisdiction::all();
+            else
+                $jurisdictions = auth()->user()->jurisdiction;
             if ($jurisdictions->isEmpty()) {
                 return view('dispatch::home')->withErrors([
                     'I can\'t seem to find your jurisdiction... Please contact your administrator.',
@@ -89,22 +93,25 @@ class TicketsController extends WController
             return abort(404);
         }
         //This line should be limited to admins+ not include contacts / maintence.
-        $tickets = auth()->user()->tickets()->where('jurisdiction_id',
-            $jurisdiction->id)->orderBy('created_at')->orderBy('priority_id')->where('deleted_at', NULL)->paginate(25);
-
-        //grab the user's assigned tickets.
+        if(auth()->user()->can_assign()) {
+            $tickets = Ticket::where('jurisdiction_id',
+                $jurisdiction->id)->orderBy('created_at')->orderBy('priority_id')->paginate(25);
+        } else {
+            $tickets = auth()->user()->tickets()->where('jurisdiction_id',
+                $jurisdiction->id)->orderBy('created_at')->orderBy('priority_id')->paginate(25);
+        }
         $tickets_ = auth()->user()->assigned_tickets()->where('jurisdiction_id',
-            $jurisdiction->id)->orderBy('created_at')->orderBy('priority_id')->where('deleted_at', NULL)->paginate(25);
-        $sum_tickets = $tickets->merge($tickets_)->sortBy('created_at')->sortBy('priority_id');
-
-        return view('dispatch::view.ticket')->with(compact('jurisdiction'))->withTickets($tickets);
+            $jurisdiction->id)->orderBy('created_at')->orderBy('priority_id')->paginate(25);
+        $sum_tickets = $tickets->merge($tickets_)->sortBy('created_at')->sortBy('priority_id')->unique();
+        return view('dispatch::view.ticket')->with(compact('jurisdiction'))->withTickets($sum_tickets);
     }
 
 
     private function searchJurisdiction($jur)
     {
         $jur = str_replace('-', '%', '%' . $jur . '%');
-
+        if(auth()->user()->can_assign())
+            return Jurisdiction::where('name', 'LIKE', $jur)->first();
         return auth()->user()->jurisdiction()->where('name', 'LIKE', $jur)->first();
     }
 
@@ -115,18 +122,21 @@ class TicketsController extends WController
 
         //This line should be limited to admins+ not include contacts / maintence.
         $ticket = $this->getUsersTicket($jurisdiction, $id);
+
         if (empty($ticket->comments)) {
             return view('dispatch::view.ticket-single-new')->with(compact('jurisdiction'))->withTicket($ticket)->withComments([]);
         }
         $comments = $ticket->comments()->orderBy('created_at', 'desc')->get();
-
         return view('dispatch::view.ticket-single-new')->with(compact('jurisdiction'))->withTicket($ticket)->withComments($comments);
     }
 
 
     private function getUsersTicket($jurisdiction, $id)
     {
-        return $this->getTickets(true)->whereJurisdictionId($jurisdiction->id)->whereId($id)->where('deleted_at', NULL)->first();
+        if(auth()->user()->can_assign()){
+            return Ticket::whereJurisdictionId($jurisdiction->id)->whereId($id)->first();
+        }
+        return $this->getTickets(true)->withTrashed()->whereJurisdictionId($jurisdiction->id)->whereId($id)->first();
     }
 
 
@@ -137,7 +147,6 @@ class TicketsController extends WController
         }
         return auth()->user()->tickets;
     }
-
 
     public function getTicketFromJurisdictionForEdit($jurisdiction, $id)
     {

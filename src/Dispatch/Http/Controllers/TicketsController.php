@@ -54,7 +54,7 @@ class TicketsController extends WController
             'enctype' => 'multipart/form-data',
         ]);
         if (empty($jurisdiction)) {
-            if(auth()->user()->can_assign())
+            if (auth()->user()->can_assign())
                 $jurisdictions = Jurisdiction::all();
             else
                 $jurisdictions = auth()->user()->jurisdiction;
@@ -70,7 +70,7 @@ class TicketsController extends WController
                 'form_' => $form_submit
             ]);
         }
-        $jurisdiction = $this->searchJurisdiction( $jurisdiction);
+        $jurisdiction = $this->searchJurisdiction($jurisdiction);
 
         return view('dispatch::create.ticket')->with([
             'jurisdiction' => $jurisdiction,
@@ -79,12 +79,18 @@ class TicketsController extends WController
         ]);
     }
 
+    private function searchJurisdiction($jur)
+    {
+        $jur = str_replace('-', '%', '%' . $jur . '%');
+        if (auth()->user()->can_assign())
+            return Jurisdiction::where('name', 'LIKE', $jur)->first();
+        return auth()->user()->jurisdiction()->where('name', 'LIKE', $jur)->first();
+    }
 
     public function viewAll()
     {
         return view('dispatch::view.ticket')->withJurisdictions(\auth()->user()->jurisdiction);
     }
-
 
     public function getTicketsForJurisdiction($jurisdiction)
     {
@@ -93,28 +99,32 @@ class TicketsController extends WController
             return abort(404);
         }
         //This line should be limited to admins+ not include contacts / maintence.
-        if(auth()->user()->can_assign()) {
-            $tickets = Ticket::where('jurisdiction_id',
-                $jurisdiction->id)->orderBy('created_at')->orderBy('priority_id')->paginate(25);
+        if (auth()->user()->can_assign()) {
+            $tickets = Ticket::where('jurisdiction_id', $jurisdiction->id)
+                ->where('deleted_at', null)
+                ->orderBy('created_at')
+                ->orderBy('priority_id')
+                ->paginate(25);
         } else {
-            $tickets = auth()->user()->tickets()->where('jurisdiction_id',
-                $jurisdiction->id)->orderBy('created_at')->orderBy('priority_id')->paginate(25);
+            $tickets = auth()->user()->tickets()
+                ->where('jurisdiction_id', $jurisdiction->id)
+                ->where('deleted_at', null)
+                ->orderBy('created_at')
+                ->orderBy('priority_id')
+                ->paginate(25);
         }
-        $tickets_ = auth()->user()->assigned_tickets()->where('jurisdiction_id',
-            $jurisdiction->id)->orderBy('created_at')->orderBy('priority_id')->paginate(25);
-        $sum_tickets = $tickets->merge($tickets_)->sortBy('created_at')->sortBy('priority_id')->unique();
+        $tickets_ = auth()->user()->assigned_tickets()
+            ->where('jurisdiction_id', $jurisdiction->id)
+            ->where('deleted_at', null)
+            ->orderBy('created_at')
+            ->orderBy('priority_id')
+            ->paginate(25);
+        $sum_tickets = $tickets->merge($tickets_)
+            ->sortBy('created_at')
+            ->sortBy('priority_id')
+            ->unique();
         return view('dispatch::view.ticket')->with(compact('jurisdiction'))->withTickets($sum_tickets);
     }
-
-
-    private function searchJurisdiction($jur)
-    {
-        $jur = str_replace('-', '%', '%' . $jur . '%');
-        if(auth()->user()->can_assign())
-            return Jurisdiction::where('name', 'LIKE', $jur)->first();
-        return auth()->user()->jurisdiction()->where('name', 'LIKE', $jur)->first();
-    }
-
 
     public function getTicketFromJurisdiction($jurisdiction, $id)
     {
@@ -133,7 +143,7 @@ class TicketsController extends WController
 
     private function getUsersTicket($jurisdiction, $id)
     {
-        if(auth()->user()->can_assign()){
+        if (auth()->user()->can_assign()) {
             return Ticket::whereJurisdictionId($jurisdiction->id)->whereId($id)->first();
         }
         return $this->getTickets(true)->withTrashed()->whereJurisdictionId($jurisdiction->id)->whereId($id)->first();
@@ -189,8 +199,8 @@ class TicketsController extends WController
             $name = $uuid . '.' . $ext;
             $file->move(storage_path(config('kregel.dispatch.storage_path')), $name);
 
-            $file_path = config('kregel.dispatch.storage_path').$name;
-            switch($ext){
+            $file_path = config('kregel.dispatch.storage_path') . $name;
+            switch ($ext) {
                 case 'png':
                 case 'jpg':
                 case 'jpeg':
@@ -206,7 +216,7 @@ class TicketsController extends WController
                 'path' => $file_path,
                 'uuid' => $uuid,
                 'ticket_id' => $id,
-                'user_id'  => auth()->user()->id,
+                'user_id' => auth()->user()->id,
                 'type' => $type
             ]);
 

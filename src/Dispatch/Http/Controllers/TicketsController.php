@@ -102,9 +102,7 @@ class TicketsController extends WController
         if (auth()->user()->can_assign()) {
             $tickets = Ticket::where('jurisdiction_id', $jurisdiction->id)
                 ->where('deleted_at', null)
-                ->orderBy('created_at')
-                ->orderBy('priority_id')
-                ->paginate(25);
+                ->orderBy('created_at')->orderBy('priority_id')->paginate(25);
         } else {
             $tickets = auth()->user()->tickets()
                 ->where('jurisdiction_id', $jurisdiction->id)

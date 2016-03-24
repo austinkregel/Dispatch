@@ -140,7 +140,7 @@ class SendEmails extends Command implements SelfHandling
                 break;
             case 'comment':
                 $this->newComment();
-                break
+                break;
             default:
                 $this->error("No type selected {new, assign, update, comment}");
         }

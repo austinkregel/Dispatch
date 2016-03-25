@@ -187,6 +187,7 @@ class SendEmails extends Command implements SelfHandling
         $this->setAssigned('A ticket you are assigned to has been updated');
         $this->setCommented('A ticket you are subscribed to has been updated');
 //        $this->oldAssigned('You have been removed from the ticket');
+        dd($this->messages);
         $this->sendDahEmails();
     }
 

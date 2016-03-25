@@ -132,11 +132,6 @@ class SendEmails extends Command implements SelfHandling
     }
 
     private function sendDahEmails(){
-        try{if($this->option('debug')){
-            dd($this->messages);
-        }}catch(\Exception $e){
-            $this->error('Cannot find debug');
-        }
         foreach($this->messages as $message_){
             extract($message_);
             Mail::queue($view, ['msg' => $message, 'user' => $user], function ($message) use ($subject, $user) {

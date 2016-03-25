@@ -17,7 +17,7 @@ class EmailTicketInfo extends Command implements SelfHandling
      *
      * @var string
      */
-    protected $signature = 'dispatch:ticket-stats' . ' {--fake= : Whether emails should be sent updating the user on the ticket statuses}';
+    protected $signature = 'dispatch:ticket-stats {--fake= : Whether emails should be sent updating the user on the ticket statuses}';
 
     /**
      * This value is the difference between emailing all your clients at a random

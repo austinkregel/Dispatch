@@ -19,7 +19,7 @@ class SendEmails extends Command implements SelfHandling
      *
      * @var string
      */
-    protected $signature = 'dispatch:send-mail' . ' {--ticket= : Ticket ID} {--type= : Valid types are [new, assigned, and updates]}';
+    protected $signature = 'dispatch:send-mail {--ticket= : Ticket ID} {--type= : Valid types are [new, assigned, and updates]}';
 
     /*
      * Have a class wide instance of an array of users. make them unique so no one gets

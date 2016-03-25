@@ -48,24 +48,17 @@ class SendEmails extends Command implements SelfHandling
     private $ticket;
 
     /**
-     * @param Collection $tickets All applicable tickets.
-     * Create a new command instance.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-
-    /**
      * Execute the console command.
      *
      * @return mixed
      */
     public function fire()
     {
+        $this->info("Firing up");
         if (is_numeric($this->option('ticket'))) {
-            $this->ticket = Ticket::find($this->option('ticket'));
+            $this->info("Finding ticket");
+            $this->ticket = Ticket::withTrashed()->find($this->option('ticket'));
+            $this->info("Found ticket");
             $this->jumpThroughTickets();
         } else {
             $this->error('You didn\'t declare a valid ticket id');
@@ -132,6 +125,7 @@ class SendEmails extends Command implements SelfHandling
     }
 
     private function sendDahEmails(){
+//        dd($this->messages);
         foreach($this->messages as $message_){
             extract($message_);
             Mail::queue($view, ['msg' => $message, 'user' => $user], function ($message) use ($subject, $user) {

@@ -21,6 +21,13 @@ class SendEmails extends Command implements SelfHandling
      */
     protected $signature = 'dispatch:send-mail' . ' {--ticket= : Ticket ID} {--type= : Valid types are [new, assigned, and updates]}';
 
+    /*
+     * Have a class wide instance of an array of users. make them unique so no one gets
+     * double spammed.
+     *
+     */
+    private $messages = [];
+
     /**
      * This value is the difference between emailing all your clients at a random
      * time and just checking if the command works.
@@ -39,7 +46,6 @@ class SendEmails extends Command implements SelfHandling
      * Custom Vars
      */
     private $ticket;
-    private $type;
 
     /**
      * @param Collection $tickets All applicable tickets.
@@ -71,18 +77,19 @@ class SendEmails extends Command implements SelfHandling
      * @param $subject
      * @param string $message
      */
-    private function assigned($subject, $msg = 'Hey $owner,EOL Just wanted to let you know you have a new ticket.')
+    private function setAssigned($subject, $msg = 'Hey $owner,EOL Just wanted to let you know you have a new ticket.')
     {
         $users = $this->ticket->assign_to->unique();
-        $msg  = [
-            'msg' => str_replace('$owner', 'Assigned user', str_replace('EOL', '<br/>', $msg ))
-        ];
+
         if (!empty($users)) {
             foreach ($users as $user) {
-                Mail::queue('dispatch::email.new-ticket', $msg + ['user' => $user] , function ($message) use ($subject, $user) {
-                    $message->subject($subject);
-                    $message->to($user->email, $user->name);
-                });
+                $msg  = [
+                    'subject' => $subject,
+                    'message' => str_replace('$owner', 'Assigned user', str_replace('EOL', '<br/>', $msg )),
+                    'user' => $user,
+                    'view' => 'dispatch::email.new-ticket'
+                ];
+                $this->messages[$user->id] = $msg;
             }
         }
     }
@@ -92,35 +99,51 @@ class SendEmails extends Command implements SelfHandling
      * @param $subject
      * @param string $message
      */
-    private function owner($subject, $message = 'Hey $owner,EOL Just wanted to let you know you have a new ticket.')
+    private function setOwner($subject, $message = 'Hey $owner,EOL Just wanted to let you know you have a new ticket.')
     {
         $user = $this->ticket->owner;
         $message = str_replace('$owner', htmlentities($user->name), str_replace('EOL', '<br/>', $message));
         $msg  = [
-            'msg' => str_replace('$owner', 'Assigned user', str_replace('EOL', '<br/>', $message )),
-            'user' => $user
+            'subject' => $subject,
+            'message' => str_replace('$owner', 'Assigned user', str_replace('EOL', '<br/>', $message )),
+            'user' => $user,
+            'view' => 'dispatch::email.new-ticket'
         ];
-
-        Mail::queue('dispatch::email.new-ticket', $msg, function ($message) use ($subject, $user) {
-            $message->subject($subject);
-            $message->to($user->email, $user->name);
-        });
+        $this->messages[$user->id] = $msg;
     }
 
-    private function commented($subject, $msg = ''){
+    private function setCommented($subject, $message = ''){
         $users = $this->ticket->assign_to->unique();
-        $msg  = [
-            'msg' => str_replace('$owner', 'Assigned user', str_replace('EOL', '<br/>', $msg ))
-        ];
+
         if (!empty($users)) {
             foreach ($users as $user) {
-                Mail::queue('dispatch::email.new-ticket', $msg + ['user' => $user] , function ($message) use ($subject, $user) {
-                    $message->subject($subject);
-                    $message->to($user->email, $user->name);
-                });
+                $message = str_replace('$owner', htmlentities($user->name), str_replace('EOL', '<br/>', $message));
+                $msg = [
+                    'subject' => $subject,
+                    'message' => str_replace('$owner', 'Assigned user', str_replace('EOL', '<br/>', $message )),
+                    'user' => $user,
+                    'view' => 'dispatch::email.new-ticket'
+                ];
+                $this->messages[$user->id] = $msg;
+
             }
         }
 
+    }
+
+    private function sendDahEmails(){
+        try{if($this->option('debug')){
+            dd($this->messages);
+        }}catch(\Exception $e){
+            $this->error('Cannot find debug');
+        }
+        foreach($this->messages as $message_){
+            extract($message_);
+            Mail::queue($view, ['msg' => $message, 'user' => $user], function ($message) use ($subject, $user) {
+                $message->subject($subject);
+                $message->to($user->email, $user->name);
+            });
+        }
     }
     /**
      * This will do the needed matching for the type of ticket creation and the
@@ -147,32 +170,35 @@ class SendEmails extends Command implements SelfHandling
     }
 
     private function newComment(){
-        $this->owner('New comment on your ticket!');
-        $this->assigned('New comment on a ticket you are assigned to!' );
-        $this->commented('New comment on a ticket you are subscribed to!');
+        $this->setOwner('New comment on your ticket!');
+        $this->setAssigned('New comment on a ticket you are assigned to!' );
+        $this->setCommented('New comment on a ticket you are subscribed to!');
+        $this->sendDahEmails();
     }
 
     private function newTicket()
     {
-        $this->owner('Ticket affirmation!');
-        $this->assigned('You have been assigned a ticket');
+        $this->setOwner('Ticket affirmation!');
+        $this->setAssigned('You have been assigned a ticket');
+        $this->sendDahEmails();
     }
 
     private function assignedATicket()
     {
-        $this->owner('Your Ticket has been reassigned');
-        $this->assigned('A ticket you are assigned to has been reassigned');
+        $this->setOwner('Your Ticket has been reassigned');
+        $this->setAssigned('A ticket you are assigned to has been reassigned');
 //        $this->oldAssigned('You have been removed from the ticket');
-        $this->commented('A ticket you are subscribed to has been reassigned');
+        $this->setCommented('A ticket you are subscribed to has been reassigned');
+        $this->sendDahEmails();
     }
 
     private function updatedTicket()
     {
-        $this->owner('Your ticket has been updated!');
-        $this->assigned('A ticket you are assigned to has been updated');
-        $this->commented('A ticket you are subscribed to has been updated');
+        $this->setOwner('Your ticket has been updated!');
+        $this->setAssigned('A ticket you are assigned to has been updated');
+        $this->setCommented('A ticket you are subscribed to has been updated');
 //        $this->oldAssigned('You have been removed from the ticket');
-
+        $this->sendDahEmails();
     }
 
     /**

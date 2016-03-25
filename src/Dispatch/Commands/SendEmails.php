@@ -57,7 +57,7 @@ class SendEmails extends Command implements SelfHandling
         $this->info("Firing up");
         if (is_numeric($this->option('ticket'))) {
             $this->info("Finding ticket");
-            $this->ticket = Ticket::withTrashed()->find($this->option('ticket'));
+            $this->ticket = Ticket::withTrashed()->whereId($this->option('ticket'))->first();
             $this->info("Found ticket");
             $this->jumpThroughTickets();
         } else {

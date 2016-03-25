@@ -50,7 +50,6 @@ class Dispatch extends ServiceProvider
                 require __DIR__.'/Http/routes.php';
             });
         }
-
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'dispatch');
         $this->publishes([
             __DIR__.'/../resources/views' => base_path('resources/views/vendor/dispatch'),
@@ -61,17 +60,6 @@ class Dispatch extends ServiceProvider
         $this->publishes([
             __DIR__.'/../config/config.php' => config_path('kregel/dispatch.php'),
         ], 'config');
-
-        Ticket::updating(function (Ticket $ticket) {
-            $ticket->adjust();
-//            $ticket->mailUsersUpdate();
-        });
-        //Ticket::created(function($ticket){
-        //    // We need to update the owner of the ticket,
-        //    // Those who are assigned to it, and those
-        //    // who commented on it of the new ticket
-        //    $ticket->mailUsers();
-        //});
     }
 
 

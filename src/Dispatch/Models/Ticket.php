@@ -33,10 +33,10 @@ class Ticket extends Model
     public static function boot()
     {
         self::updating(function(Ticket $ticket){
-//            $ticket->adjust();
+            $ticket->adjust();
         });
         self::updated(function (Ticket $ticket) {
-//            $ticket->sendEmail('update');
+            $ticket->sendEmail('update');
         });
         self::created(function (Ticket $ticket) {
             if($ticket->finish_by === '0000-00-00 00:00:00'){

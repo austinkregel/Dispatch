@@ -22,7 +22,7 @@ Route::group(['prefix' => config('kregel.dispatch.route'), 'as' => 'dispatch::',
         Route::get('ticket/{name}/{id}', ['as' => 'ticket-single', 'uses' => 'TicketsController@getTicketFromJurisdiction']);
         Route::get('jurisdictions', ['as' => 'jurisdiction', 'uses' => 'JurisdictionController@viewAll']);
 
-        Route::group(['as' => 'closed'], function(){
+        Route::group(['as' => 'closed.'], function(){
             Route::get('closed/{name}', ['as' => 'tickets', 'uses' => 'TicketsController@getClosedTicketsFromJurisdiction']);
 
         });

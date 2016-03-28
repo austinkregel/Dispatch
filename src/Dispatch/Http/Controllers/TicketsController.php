@@ -181,7 +181,7 @@ class TicketsController extends WController
     {
         $jurisdiction = $this->searchJurisdiction($jurisdiction);
         $tickets = $jurisdiction->tickets()->whereRaw('deleted_at is not null')->get();
-        return view('dispatch::view.closed-tickets');
+        return view('dispatch::view.ticket', compact('tickets', 'jurisdiction'));
     }
 
     public function postTicketCreate($id, Request $request)

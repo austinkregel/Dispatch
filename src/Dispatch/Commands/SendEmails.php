@@ -80,7 +80,7 @@ class SendEmails extends Command implements SelfHandling
                     'subject' => $subject,
                     'message' => str_replace('$owner', 'Assigned user', str_replace('EOL', '<br/>', $msg )),
                     'user' => $user,
-                    'view' => 'dispatch::email.new-ticket'
+                    'view' => config('kregel.dispatch.mail.template.assign.ticket')
                 ];
                 $this->messages[$user->id] = $msg;
             }
@@ -92,7 +92,7 @@ class SendEmails extends Command implements SelfHandling
      * @param $subject
      * @param string $message
      */
-    private function setOwner($subject, $message = 'Hey $owner,EOL Just wanted to let you know you have a new ticket.')
+    private function setOwner($subject, $message = 'Hey $owner,EOLJust wanted to let you know you have a new ticket.')
     {
         $user = $this->ticket->owner;
         $message = str_replace('$owner', htmlentities($user->name), str_replace('EOL', '<br/>', $message));
@@ -100,7 +100,7 @@ class SendEmails extends Command implements SelfHandling
             'subject' => $subject,
             'message' => str_replace('$owner', 'Assigned user', str_replace('EOL', '<br/>', $message )),
             'user' => $user,
-            'view' => 'dispatch::email.new-ticket'
+            'view' => config('kregel.dispatch.mail.template.new.ticket')
         ];
         $this->messages[$user->id] = $msg;
     }
@@ -110,12 +110,15 @@ class SendEmails extends Command implements SelfHandling
 
         if (!empty($users)) {
             foreach ($users as $user) {
-                $message = str_replace('$owner', htmlentities($user->name), str_replace('EOL', '<br/>', $message));
+
                 $msg = [
                     'subject' => $subject,
                     'message' => str_replace('$owner', 'Assigned user', str_replace('EOL', '<br/>', $message )),
-                    'user' => $user,
-                    'view' => 'dispatch::email.new-ticket'
+                    'data' => [
+                        'user' => $user,
+                        'ticket' => $this->ticket
+                    ],
+                    'view' => config('kregel.dispatch.mail.template.new.comment')
                 ];
                 $this->messages[$user->id] = $msg;
 
@@ -131,6 +134,7 @@ class SendEmails extends Command implements SelfHandling
             Mail::queue($view, ['msg' => $message, 'user' => $user], function ($message) use ($subject, $user) {
                 $message->subject($subject);
                 $message->to($user->email, $user->name);
+                $message->from(config('kregel.dispatch.mail.from.address'), config('kregel.dispatch.mail.from.name'));
             });
         }
     }
@@ -168,7 +172,6 @@ class SendEmails extends Command implements SelfHandling
     private function newTicket()
     {
         $this->setOwner('Ticket affirmation!');
-        $this->setAssigned('You have been assigned a ticket');
         $this->sendDahEmails();
     }
 

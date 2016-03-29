@@ -155,7 +155,7 @@ class TicketsController extends WController
             if (auth()->user()->can_assign()) {
                 return Ticket::whereJurisdictionId($jurisdiction->id)->whereId($id)->first();
             }
-            return $this->getTickets(true)->withTrashed()->whereJurisdictionId($jurisdiction->id)->whereId($id)->first();
+            return $this->getTickets(true)->whereJurisdictionId($jurisdiction->id)->whereId($id)->first();
         }
         return abort(404, 'This is not the page you are looking for...');
     }

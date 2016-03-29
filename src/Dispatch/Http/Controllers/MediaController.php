@@ -18,7 +18,7 @@ class MediaController extends Controller
         if(empty($media) || $uuid === '159a50e6-5382-4a52-ae94-3f5a4e8f0584'){
             return response()->make(file_get_contents(storage_path('app/media/159a50e6-5382-4a52-ae94-3f5a4e8f0584.jpeg')), 404)->header('Content-type','image/jpeg')->header('Content-length', filesize((storage_path('app/media/159a50e6-5382-4a52-ae94-3f5a4e8f0584.jpeg'))));
         }
-        if(auth()->user()->can('view-'. str_slug($media->ticket->jurisdiction->name)) || auth()->user()->hasRole('developer')) {
+        if(auth()->user()->jurisdiction->contains('id',$media->ticket->jurisdiction->id) || auth()->user()->hasRole('developer')){
             if ($media->type == 'doc')
                 return $this->media('application/pdf', $media);
             else {

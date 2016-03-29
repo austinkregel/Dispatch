@@ -72,7 +72,7 @@ class TicketsController extends WController
 
         }
         $jurisdiction = $this->searchJurisdiction($jurisdiction);
-        if(auth()->user()->can('view-'. str_slug($jurisdiction->name)) || auth()->user()->hasRole('developer')) {
+        if(auth()->user()->jurisdiction->contains('id',$jurisdiction->id) || auth()->user()->hasRole('developer')){
             return view('dispatch::create.ticket')->with([
                 'jurisdiction' => $jurisdiction,
                 'form' => $form,
@@ -101,7 +101,7 @@ class TicketsController extends WController
         if (empty($jurisdiction)) {
             return abort(404, 'This is not the page you are looking for...');
         }
-        if(auth()->user()->can('view-'. str_slug($jurisdiction->name)) || auth()->user()->hasRole('developer')) {
+        if(auth()->user()->jurisdiction->contains('id',$jurisdiction->id) || auth()->user()->hasRole('developer')){
 
             //This line should be limited to admins+ not include contacts / maintence.
             if (auth()->user()->can_assign()) {
@@ -134,7 +134,7 @@ class TicketsController extends WController
     public function getTicketFromJurisdiction($jurisdiction, $id)
     {
         $jurisdiction = $this->searchJurisdiction($jurisdiction);
-        if(auth()->user()->can('view-'. str_slug($jurisdiction->name)) || auth()->user()->hasRole('developer')){
+        if(auth()->user()->jurisdiction->contains('id',$jurisdiction->id) || auth()->user()->hasRole('developer')){
 
             //This line should be limited to admins+ not include contacts / maintence.
             $ticket = $this->getUsersTicket($jurisdiction, $id);
@@ -151,7 +151,7 @@ class TicketsController extends WController
 
     private function getUsersTicket($jurisdiction, $id)
     {
-        if(auth()->user()->can('view-'. str_slug($jurisdiction->name)) || auth()->user()->hasRole('developer')){
+        if(auth()->user()->jurisdiction->contains('id',$jurisdiction->id) || auth()->user()->hasRole('developer')){
             if (auth()->user()->can_assign()) {
                 return Ticket::whereJurisdictionId($jurisdiction->id)->whereId($id)->first();
             }

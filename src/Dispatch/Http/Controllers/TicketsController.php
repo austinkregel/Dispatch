@@ -104,29 +104,10 @@ class TicketsController extends WController
         if(auth()->user()->jurisdiction->contains('id',$jurisdiction->id) || auth()->user()->hasRole('developer')){
 
             //This line should be limited to admins+ not include contacts / maintence.
-            if (auth()->user()->can_assign()) {
                 $tickets = Ticket::where('jurisdiction_id', $jurisdiction->id)
                     ->where('deleted_at', null)
                     ->orderBy('created_at')->orderBy('priority_id')->paginate(25);
-            } else {
-                $tickets = auth()->user()->tickets()
-                    ->where('jurisdiction_id', $jurisdiction->id)
-                    ->where('deleted_at', null)
-                    ->orderBy('created_at')
-                    ->orderBy('priority_id')
-                    ->paginate(25);
-            }
-            $tickets_ = auth()->user()->assigned_tickets()
-                ->where('jurisdiction_id', $jurisdiction->id)
-                ->where('deleted_at', null)
-                ->orderBy('created_at')
-                ->orderBy('priority_id')
-                ->paginate(25);
-            $sum_tickets = $tickets->merge($tickets_)
-                ->sortBy('created_at')
-                ->sortBy('priority_id')
-                ->unique();
-            return view('dispatch::view.ticket')->with(compact('jurisdiction'))->withTickets($sum_tickets);
+            return view('dispatch::view.ticket')->with(compact('jurisdiction'))->withTickets($tickets);
         }
         return abort(404, 'This is not the page you are looking for...');
     }

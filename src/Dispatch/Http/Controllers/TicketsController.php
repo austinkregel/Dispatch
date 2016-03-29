@@ -69,14 +69,17 @@ class TicketsController extends WController
                 'form' => $form,
                 'form_' => $form_submit
             ]);
+
         }
         $jurisdiction = $this->searchJurisdiction($jurisdiction);
-
-        return view('dispatch::create.ticket')->with([
-            'jurisdiction' => $jurisdiction,
-            'form' => $form,
-            'form_' => $form_submit
-        ]);
+        if(auth()->user()->can('view-'. str_slug($jurisdiction->name)) || auth()->user()->hasRole('developer')) {
+            return view('dispatch::create.ticket')->with([
+                'jurisdiction' => $jurisdiction,
+                'form' => $form,
+                'form_' => $form_submit
+            ]);
+        }
+        return abort(404, 'This is not the page you are looking for...');
     }
 
     private function searchJurisdiction($jur)
@@ -96,55 +99,65 @@ class TicketsController extends WController
     {
         $jurisdiction = $this->searchJurisdiction($jurisdiction);
         if (empty($jurisdiction)) {
-            return abort(404);
+            return abort(404, 'This is not the page you are looking for...');
         }
-        //This line should be limited to admins+ not include contacts / maintence.
-        if (auth()->user()->can_assign()) {
-            $tickets = Ticket::where('jurisdiction_id', $jurisdiction->id)
-                ->where('deleted_at', null)
-                ->orderBy('created_at')->orderBy('priority_id')->paginate(25);
-        } else {
-            $tickets = auth()->user()->tickets()
+        if(auth()->user()->can('view-'. str_slug($jurisdiction->name)) || auth()->user()->hasRole('developer')) {
+
+            //This line should be limited to admins+ not include contacts / maintence.
+            if (auth()->user()->can_assign()) {
+                $tickets = Ticket::where('jurisdiction_id', $jurisdiction->id)
+                    ->where('deleted_at', null)
+                    ->orderBy('created_at')->orderBy('priority_id')->paginate(25);
+            } else {
+                $tickets = auth()->user()->tickets()
+                    ->where('jurisdiction_id', $jurisdiction->id)
+                    ->where('deleted_at', null)
+                    ->orderBy('created_at')
+                    ->orderBy('priority_id')
+                    ->paginate(25);
+            }
+            $tickets_ = auth()->user()->assigned_tickets()
                 ->where('jurisdiction_id', $jurisdiction->id)
                 ->where('deleted_at', null)
                 ->orderBy('created_at')
                 ->orderBy('priority_id')
                 ->paginate(25);
+            $sum_tickets = $tickets->merge($tickets_)
+                ->sortBy('created_at')
+                ->sortBy('priority_id')
+                ->unique();
+            return view('dispatch::view.ticket')->with(compact('jurisdiction'))->withTickets($sum_tickets);
         }
-        $tickets_ = auth()->user()->assigned_tickets()
-            ->where('jurisdiction_id', $jurisdiction->id)
-            ->where('deleted_at', null)
-            ->orderBy('created_at')
-            ->orderBy('priority_id')
-            ->paginate(25);
-        $sum_tickets = $tickets->merge($tickets_)
-            ->sortBy('created_at')
-            ->sortBy('priority_id')
-            ->unique();
-        return view('dispatch::view.ticket')->with(compact('jurisdiction'))->withTickets($sum_tickets);
+        return abort(404, 'This is not the page you are looking for...');
     }
 
     public function getTicketFromJurisdiction($jurisdiction, $id)
     {
         $jurisdiction = $this->searchJurisdiction($jurisdiction);
+        if(auth()->user()->can('view-'. str_slug($jurisdiction->name)) || auth()->user()->hasRole('developer')){
 
-        //This line should be limited to admins+ not include contacts / maintence.
-        $ticket = $this->getUsersTicket($jurisdiction, $id);
+            //This line should be limited to admins+ not include contacts / maintence.
+            $ticket = $this->getUsersTicket($jurisdiction, $id);
 
-        if (empty($ticket->comments)) {
-            return view('dispatch::view.ticket-single-new')->with(compact('jurisdiction'))->withTicket($ticket)->withComments([]);
+            if (empty($ticket->comments)) {
+                return view('dispatch::view.ticket-single-new')->with(compact('jurisdiction'))->withTicket($ticket)->withComments([]);
+            }
+            $comments = $ticket->comments()->orderBy('created_at', 'desc')->get();
+            return view('dispatch::view.ticket-single-new')->with(compact('jurisdiction'))->withTicket($ticket)->withComments($comments);
         }
-        $comments = $ticket->comments()->orderBy('created_at', 'desc')->get();
-        return view('dispatch::view.ticket-single-new')->with(compact('jurisdiction'))->withTicket($ticket)->withComments($comments);
+        return abort(404, 'This is not the page you are looking for...');
     }
 
 
     private function getUsersTicket($jurisdiction, $id)
     {
-        if (auth()->user()->can_assign()) {
-            return Ticket::whereJurisdictionId($jurisdiction->id)->whereId($id)->first();
+        if(auth()->user()->can('view-'. str_slug($jurisdiction->name)) || auth()->user()->hasRole('developer')){
+            if (auth()->user()->can_assign()) {
+                return Ticket::whereJurisdictionId($jurisdiction->id)->whereId($id)->first();
+            }
+            return $this->getTickets(true)->withTrashed()->whereJurisdictionId($jurisdiction->id)->whereId($id)->first();
         }
-        return $this->getTickets(true)->withTrashed()->whereJurisdictionId($jurisdiction->id)->whereId($id)->first();
+        return abort(404, 'This is not the page you are looking for...');
     }
 
 

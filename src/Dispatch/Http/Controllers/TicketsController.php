@@ -45,7 +45,7 @@ class TicketsController extends WController
     public function create($jurisdiction = null)
     {
         if (!auth()->user()->can('create-ticket')) {
-            return response(view('errors.403')->withMessage('Sorry, but it looks like'), 403);
+            return response(view('errors.403')->withMessage('Sorry, but it looks like you don\'t have permission to view this'), 403);
         }
         $form = $this->form->using(config('kregel.formmodel.using.framework'))->withModel(new $this->ticket)->submitTo(route('warden::api.create-model',
             ['ticket']));
@@ -92,7 +92,10 @@ class TicketsController extends WController
 
     public function viewAll()
     {
-        return view('dispatch::view.ticket')->withJurisdictions(\auth()->user()->jurisdiction);
+        if(auth()->user()->jurisdiction->count() === 1){
+            return redirect(route('dispatch::view.ticket', str_slug(auth()->user()->jurisdiction->first()->name)),302);
+        }
+        return view('dispatch::view.ticket')->withJurisdictions(auth()->user()->jurisdiction);
     }
 
     public function getTicketsForJurisdiction($jurisdiction)

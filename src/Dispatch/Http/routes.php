@@ -9,6 +9,9 @@ Route::group(['prefix' => config('kregel.dispatch.route'), 'as' => 'dispatch::',
     require 'apiroutes.php';
 
     Route::get('/', function () {
+        if(auth()->user()->jurisdiction->count() === 1){
+            return redirect(route('dispatch::view.ticket', str_slug(auth()->user()->jurisdiction->first()->name)),302);
+        }
         return view('dispatch::home');
     });
     Route::group(['as' => 'new.', 'prefix' => 'new'], function () {

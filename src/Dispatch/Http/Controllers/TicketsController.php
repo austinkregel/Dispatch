@@ -87,7 +87,10 @@ class TicketsController extends WController
         $jur = str_replace('-', '%', '%' . $jur . '%');
         if (auth()->user()->can_assign())
             return Jurisdiction::where('name', 'LIKE', $jur)->first();
-        return auth()->user()->jurisdiction()->where('name', 'LIKE', $jur)->first();
+        $jurisdiction = auth()->user()->jurisdiction()->where('name', 'LIKE', $jur)->first();
+        if($jurisdiction)
+            return $jurisdiction;
+        abort(404, 'I can not find that location for you...');
     }
 
     public function viewAll()

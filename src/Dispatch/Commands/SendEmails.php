@@ -77,10 +77,13 @@ class SendEmails extends Command implements SelfHandling
         if (!empty($users)) {
             foreach ($users as $user) {
                 $msg  = [
-                    'subject' => $subject,
-                    'message' => str_replace('$owner', 'Assigned user', str_replace('EOL', '<br/>', $msg )),
-                    'user' => $user,
-                    'view' => config('kregel.dispatch.mail.template.assign.ticket')
+                    $subject,
+                    str_replace('$owner', $user->name, str_replace('EOL', '<br/>', $msg )),
+                    config('kregel.dispatch.mail.template.assign.ticket'),
+                    [
+                        'user' => $user,
+                        'ticket' => $this->ticket
+                    ]
                 ];
                 $this->messages[$user->id] = $msg;
             }
@@ -97,10 +100,13 @@ class SendEmails extends Command implements SelfHandling
         $user = $this->ticket->owner;
         $message = str_replace('$owner', htmlentities($user->name), str_replace('EOL', '<br/>', $message));
         $msg  = [
-            'subject' => $subject,
-            'message' => str_replace('$owner', 'Assigned user', str_replace('EOL', '<br/>', $message )),
-            'user' => $user,
-            'view' => config('kregel.dispatch.mail.template.new.ticket')
+            $subject,
+            str_replace('$owner', 'Assigned user', str_replace('EOL', '<br/>', $message )),
+            config('kregel.dispatch.mail.template.new.ticket'),
+            [
+                'user' => $user,
+                'ticket' => $this->ticket
+            ]
         ];
         $this->messages[$user->id] = $msg;
     }
@@ -112,13 +118,13 @@ class SendEmails extends Command implements SelfHandling
             foreach ($users as $user) {
 
                 $msg = [
-                    'subject' => $subject,
-                    'message' => str_replace('$owner', 'Assigned user', str_replace('EOL', '<br/>', $message )),
-                    'data' => [
+                    $subject,
+                    str_replace('$owner', 'Assigned user', str_replace('EOL', '<br/>', $message )),
+                    config('kregel.dispatch.mail.template.new.comment'),
+                    [
                         'user' => $user,
                         'ticket' => $this->ticket
                     ],
-                    'view' => config('kregel.dispatch.mail.template.new.comment')
                 ];
                 $this->messages[$user->id] = $msg;
 
@@ -128,9 +134,9 @@ class SendEmails extends Command implements SelfHandling
     }
 
     private function sendDahEmails(){
-//        dd($this->messages);
         foreach($this->messages as $message_){
-            extract($message_);
+            list($subject, $message, $view, $data) = ($message_);
+            $user = $data['user'];
             Mail::queue($view, ['msg' => $message, 'user' => $user], function ($message) use ($subject, $user) {
                 $message->subject($subject);
                 $message->to($user->email, $user->name);

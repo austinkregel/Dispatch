@@ -82,7 +82,6 @@ class SendEmails extends Command implements SelfHandling
                     config('kregel.dispatch.mail.template.assign.ticket'),
                     [
                         'user' => $user,
-                        'ticket' => $this->ticket
                     ]
                 ];
                 $this->messages[$user->id] = $msg;
@@ -105,7 +104,6 @@ class SendEmails extends Command implements SelfHandling
             config('kregel.dispatch.mail.template.new.ticket'),
             [
                 'user' => $user,
-                'ticket' => $this->ticket
             ]
         ];
         $this->messages[$user->id] = $msg;
@@ -123,7 +121,6 @@ class SendEmails extends Command implements SelfHandling
                     config('kregel.dispatch.mail.template.new.comment'),
                     [
                         'user' => $user,
-                        'ticket' => $this->ticket
                     ],
                 ];
                 $this->messages[$user->id] = $msg;
@@ -137,11 +134,11 @@ class SendEmails extends Command implements SelfHandling
         foreach($this->messages as $message_){
             list($subject, $message, $view, $data) = ($message_);
             $user = $data['user'];
-            Mail::queue($view, ['msg' => $message, 'user' => $user], function ($message) use ($subject, $user) {
+            Mail::queue($view, ['msg' => $message, 'user' => $user, 'ticket' => $this->ticket], function ($message) use ($subject, $user) {
                 $message->subject($subject);
                 $message->to($user->email, $user->name);
                 $message->from(config('kregel.dispatch.mail.from.address'), config('kregel.dispatch.mail.from.name'));
-            });
+            },'ticket-emails');
         }
     }
     /**

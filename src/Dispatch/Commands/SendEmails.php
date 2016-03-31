@@ -183,7 +183,7 @@ class SendEmails extends Command implements SelfHandling
 
     private function assignedATicket()
     {
-        $this->setOwner('Your Ticket has been reassigned');
+        $this->setOwner('Your ticket has been assigned');
         $this->setAssigned('A ticket you are assigned to has been reassigned');
 //        $this->oldAssigned('You have been removed from the ticket');
         $this->setCommented('A ticket you are subscribed to has been reassigned');

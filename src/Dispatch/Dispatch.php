@@ -8,7 +8,8 @@ use Kregel\Dispatch\Commands\EmailTicketInfo;
 use Kregel\Dispatch\Commands\SendEmails;
 use Kregel\Dispatch\Models\Jurisdiction;
 use Kregel\Dispatch\Models\Ticket;
-
+use Queue;
+use Log;
 class Dispatch extends ServiceProvider
 {
     /**
@@ -45,6 +46,9 @@ class Dispatch extends ServiceProvider
      */
     public function boot()
     {
+        Queue::failing(function ($connection, $job, $data) {
+                Log::critical('A job is failing: '. $job);
+        });
         if (!$this->app->routesAreCached()) {
             $this->app->router->group(['namespace' => 'Kregel\Dispatch\Http\Controllers'], function ($router) {
                 require __DIR__.'/Http/routes.php';

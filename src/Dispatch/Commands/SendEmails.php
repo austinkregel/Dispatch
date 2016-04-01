@@ -134,7 +134,6 @@ class SendEmails extends Command implements SelfHandling
         foreach($this->messages as $message_){
             list($subject, $message, $view, $data) = ($message_);
             $user = $data['user'];
-            dd($view);
             Mail::queue($view, ['msg' => $message, 'user' => $user, 'ticket' => $this->ticket], function ($message) use ($subject, $user) {
                 $message->subject($subject);
                 $message->to($user->email, $user->name);

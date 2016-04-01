@@ -110,9 +110,9 @@ class TicketsController extends WController
         if(auth()->user()->jurisdiction->contains('id',$jurisdiction->id) || auth()->user()->hasRole('developer')){
 
             //This line should be limited to admins+ not include contacts / maintence.
-                $tickets = Ticket::where('jurisdiction_id', $jurisdiction->id)
-                    ->where('deleted_at', null)
-                    ->orderBy('created_at')->orderBy('priority_id')->paginate(25);
+            $tickets = Ticket::where('jurisdiction_id', $jurisdiction->id)
+                ->where('deleted_at', null)
+                ->orderBy('priority_id')->orderBy('created_at')->paginate(25);
             return view('dispatch::view.ticket')->with(compact('jurisdiction'))->withTickets($tickets);
         }
         return abort(404, 'This is not the page you are looking for...');
@@ -129,8 +129,8 @@ class TicketsController extends WController
             if (empty($ticket->comments)) {
                 return view('dispatch::view.ticket-single-new')->with(compact('jurisdiction'))->withTicket($ticket)->withComments([]);
             }
-            $comments = $ticket->comments()->orderBy('created_at', 'desc')->get();
-            return view('dispatch::view.ticket-single-new')->with(compact('jurisdiction'))->withTicket($ticket)->withComments($comments);
+            $comments = $ticket->comments()->orderBy('created_at', 'asc')->get();
+            return view('dispatch::view.ticket-single-new')->with(compact('jurisdiction'))->withTicket($ticket->orderBy('priority_id'))->withComments($comments);
         }
         return abort(404, 'This is not the page you are looking for...');
     }
@@ -177,7 +177,7 @@ class TicketsController extends WController
     public function getClosedTicketsFromJurisdiction($jurisdiction)
     {
         $jurisdiction = $this->searchJurisdiction($jurisdiction);
-        $tickets = $jurisdiction->tickets()->whereRaw('deleted_at is not null')->get();
+        $tickets = $jurisdiction->tickets()->whereRaw('deleted_at is not null')->orderBy('priority_id')->orderBy('created_at')->get();
         return view('dispatch::view.ticket', compact('tickets', 'jurisdiction'));
     }
 

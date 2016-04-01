@@ -47,7 +47,7 @@ class Dispatch extends ServiceProvider
     public function boot()
     {
         Queue::failing(function ($connection, $job, $data) {
-                Log::critical('A job is failing: '. $data);
+                Log::critical('A job is failing: ');
         });
         if (!$this->app->routesAreCached()) {
             $this->app->router->group(['namespace' => 'Kregel\Dispatch\Http\Controllers'], function ($router) {

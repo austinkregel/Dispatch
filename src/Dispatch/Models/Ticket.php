@@ -33,17 +33,17 @@ class Ticket extends Model
     public static function boot()
     {
         self::updating(function(Ticket $ticket){
-//            $ticket->adjust();
+            $ticket->axdjust();
         });
         self::updated(function (Ticket $ticket) {
-//            $ticket->sendEmail('update');
+            $ticket->sendEmail('update');
         });
         self::created(function (Ticket $ticket) {
             if($ticket->finish_by === '0000-00-00 00:00:00'){
                 $ticket->finish_by = date('Y-m-d', strtotime($ticket->priority->deadline));
                 $ticket->save();
             }
-//            $ticket->sendEmail('new');
+            $ticket->sendEmail('new');
         });
         self::deleting(function(Ticket $ticket) {
             $ticket->closer_id = auth()->user()->id;

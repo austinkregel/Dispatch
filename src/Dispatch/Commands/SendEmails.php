@@ -103,7 +103,7 @@ class SendEmails extends Command implements SelfHandling
                 'user' => $user,
             ]
         ];
-        
+
         $this->messages[$this->ticket->jurisdiction->user->id] =[
             $subject,
             $view,
@@ -134,7 +134,6 @@ class SendEmails extends Command implements SelfHandling
     }
 
     private function sendDahEmails(){
-        dd($this->messages);
         foreach($this->messages as $message_){
             list($subject, $view, $data) = ($message_);
             $user = $data['user'];

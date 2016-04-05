@@ -134,15 +134,20 @@ class SendEmails extends Command implements SelfHandling
 
     }
 
+
     private function sendDahEmails(){
         foreach($this->messages as $message_){
             list($subject, $view, $data) = ($message_);
             $user = $data['user'];
-            Mail::queue($view, ['user' => $user, 'ticket' => $this->ticket], function ($message) use ($subject, $user) {
-                $message->subject($subject);
-                $message->to($user->email, $user->name);
-                $message->from(config('kregel.dispatch.mail.from.address'), config('kregel.dispatch.mail.from.name'));
-            },'ticket-emails');
+            if(!config('mail.pretend')) {
+                Mail::queue($view, ['user' => $user, 'ticket' => $this->ticket], function ($message) use ($subject, $user) {
+                    $message->subject($subject);
+                    $message->to($user->email, $user->name);
+                    $message->from(config('kregel.dispatch.mail.from.address'), config('kregel.dispatch.mail.from.name'));
+                }, 'ticket-emails');
+            } else {
+                $this->error("Mail not added to the queue! Mail pretend enabled!");
+            }
         }
     }
     /**

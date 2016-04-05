@@ -96,15 +96,21 @@ class SendEmails extends Command implements SelfHandling
     private function setOwner($subject, $view)
     {
         $user = $this->ticket->owner;
-        $msg  = [
+        $this->messages[$user->id] = [
             $subject,
             $view,
             [
                 'user' => $user,
             ]
         ];
-        $this->messages[$user->id] = $msg;
-        $this->messages[$this->ticket->jurisdiction->user->id] = $this->ticket->jurisdiction->user;
+        
+        $this->messages[$this->ticket->jurisdiction->user->id] =[
+            $subject,
+            $view,
+            [
+               'user' => $this->ticket->jurisdiction->user,
+            ]
+        ];
     }
 
     private function setCommented($subject, $view){

@@ -23,8 +23,8 @@ class Jurisdiction extends Model
         });
         self::created(function ($jurisdiction) {
             if (\Auth::check()) {
-                if (!\Auth::user()->jurisdiction->contains($jurisdiction->id)) {
-                    \Auth::user()->jurisdiction()->attach($jurisdiction->id);
+                if (!auth()->user()->jurisdiction->contains($jurisdiction->id)) {
+                    auth()->user()->jurisdiction()->attach($jurisdiction->id);
                 }
             } else {
                 $user = config('auth.model');
@@ -50,11 +50,11 @@ class Jurisdiction extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'dispatch_jurisdiction_user', 'jurisdiction_id','user_id');
+        return $this->belongsToMany(config('auth.model'), 'dispatch_jurisdiction_user', 'jurisdiction_id','user_id');
     }
 
     public function user(){
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(config('auth.model'));
     }
     public function tickets()
     {

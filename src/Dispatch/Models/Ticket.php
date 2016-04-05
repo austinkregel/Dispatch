@@ -33,7 +33,7 @@ class Ticket extends Model
     public static function boot()
     {
         self::updating(function(Ticket $ticket){
-            $ticket->axdjust();
+            $ticket->adjust();
         });
         self::updated(function (Ticket $ticket) {
             $ticket->sendEmail('update');

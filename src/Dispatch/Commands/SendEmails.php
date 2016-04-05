@@ -70,7 +70,7 @@ class SendEmails extends Command implements SelfHandling
      * @param $subject
      * @param string $message
      */
-    private function setAssigned($subject, $msg = 'Hey $owner,EOL Just wanted to let you know you have a new ticket.')
+    private function setAssigned($subject, $view)
     {
         $users = $this->ticket->assign_to->unique();
 
@@ -132,6 +132,7 @@ class SendEmails extends Command implements SelfHandling
     }
 
     private function sendDahEmails(){
+        dd($this->messages);
         foreach($this->messages as $message_){
             list($subject, $message, $view, $data) = ($message_);
             $user = $data['user'];
@@ -167,32 +168,38 @@ class SendEmails extends Command implements SelfHandling
     }
 
     private function newComment(){
-        $this->setOwner('New comment on your ticket!');
-        $this->setAssigned('New comment on a ticket you are assigned to!' );
-        $this->setCommented('New comment on a ticket you are subscribed to!');
+        $view = config('kregel.dispatch.mail.template.new.comment');
+
+        $this->setOwner('New comment on your ticket!',$view);
+        $this->setAssigned('New comment on a ticket you are assigned to!', $view);
+        $this->setCommented('New comment on a ticket you are subscribed to!', $view);
         $this->sendDahEmails();
     }
 
     private function newTicket()
     {
-        $this->setOwner('Ticket affirmation!');
+        $view = config('kregel.dispatch.mail.template.assign.ticket');
+
+        $this->setOwner('Ticket affirmation!', $view);
         $this->sendDahEmails();
     }
 
     private function assignedATicket()
     {
-        $this->setOwner('Your ticket has been assigned');
-        $this->setAssigned('A ticket you are assigned to has been reassigned');
+        $view = config('kregel.dispatch.mail.template.assign.ticket');
+        $this->setOwner('Your ticket has been assigned', $view);
+        $this->setAssigned('A ticket you are assigned to has been reassigned',$view);
 //        $this->oldAssigned('You have been removed from the ticket');
-        $this->setCommented('A ticket you are subscribed to has been reassigned');
+        $this->setCommented('A ticket you are subscribed to has been reassigned', $view);
         $this->sendDahEmails();
     }
 
     private function updatedTicket()
     {
-        $this->setOwner('Your ticket has been updated!');
-        $this->setAssigned('A ticket you are assigned to has been updated');
-        $this->setCommented('A ticket you are subscribed to has been updated');
+        $view = config('kregel.dispatch.mail.template.update.ticket');
+        $this->setOwner('Your ticket has been updated!', $view);
+        $this->setAssigned('A ticket you are assigned to has been updated', $view);
+        $this->setCommented('A ticket you are subscribed to has been updated', $view);
 //        $this->oldAssigned('You have been removed from the ticket');
         $this->sendDahEmails();
     }

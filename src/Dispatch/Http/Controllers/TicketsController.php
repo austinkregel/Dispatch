@@ -138,7 +138,7 @@ class TicketsController extends WController
 
     private function getUsersTicket($jurisdiction, $id)
     {
-        if(auth()->user()->jurisdiction->contains('id',$jurisdiction->id) || auth()->user()->hasRole('developer')){
+        if(auth()->user()->jurisdiction->contains('id',$jurisdiction->id) || auth()->user()->hasRole(['developer', 'super-admin', 'admin'])){
             return Ticket::whereJurisdictionId($jurisdiction->id)->whereId($id)->first();
         }
         return abort(404, 'This is not the page you are looking for...');

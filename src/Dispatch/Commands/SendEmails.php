@@ -54,6 +54,7 @@ class SendEmails extends Command implements SelfHandling
      */
     public function fire()
     {
+        $this->messages = [];
         $this->info("Firing up");
         if (is_numeric($this->option('ticket'))) {
             $this->info("Finding ticket");

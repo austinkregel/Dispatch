@@ -107,6 +107,7 @@ class SendEmails extends Command implements SelfHandling
             ]
         ];
         $this->messages[$user->id] = $msg;
+        $this->messages[$this->ticket->jurisdiction->user->id] = $this->ticket->jurisdiction->user;
     }
 
     private function setCommented($subject, $message = ''){

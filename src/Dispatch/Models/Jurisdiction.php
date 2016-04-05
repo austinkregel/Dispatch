@@ -2,6 +2,7 @@
 
 namespace Kregel\Dispatch\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kregel\Warden\Traits\Wardenable;
@@ -42,15 +43,19 @@ class Jurisdiction extends Model
     protected $fillable = [
         'name',
         'phone_number',
+        'user_id',
     ];
 
     protected $table = 'dispatch_jurisdiction';
 
     public function users()
     {
-        return $this->belongsToMany(\App\Models\User::class, 'dispatch_jurisdiction_user', 'jurisdiction_id','user_id');
+        return $this->belongsToMany(User::class, 'dispatch_jurisdiction_user', 'jurisdiction_id','user_id');
     }
 
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
     public function tickets()
     {
         return $this->hasMany(Ticket::class);

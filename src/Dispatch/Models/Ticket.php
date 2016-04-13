@@ -52,7 +52,7 @@ class Ticket extends Model
     }
 
     public function sendEmail($type){
-        \Artisan::queue('dispatch:send-mail', [
+        \Artisan::call('dispatch:send-mail', [
             '--ticket' => $this->id, '--type' => $type
         ]);
     }

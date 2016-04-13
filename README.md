@@ -9,3 +9,4 @@ First, if they're not registered, register the commands for Dispatch. Otherwise 
 
 Second, on the topic of emails, you need to have two queue listeners. One on the `default` queue, and another for `ticket-emails`.
 
+Third, Give your user model the Dispatchable trait and publish the dispatch config.

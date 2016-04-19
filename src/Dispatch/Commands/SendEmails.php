@@ -177,9 +177,9 @@ class SendEmails extends Command implements SelfHandling
     private function newComment(){
         $view = config('kregel.dispatch.mail.template.new.comment');
 
-        $this->setOwner('New comment on your ticket!',$view);
-        $this->setAssigned('New comment on a ticket you are assigned to!', $view);
-        $this->setCommented('New comment on a ticket you are subscribed to!', $view);
+        $this->setOwner('New comment on your ticket in '. $this->ticket->jurisdiction->name,$view);
+        $this->setAssigned('New comment on a ticket you are assigned to '. $this->ticket->jurisdiction->name, $view);
+        $this->setCommented('New comment on a ticket you are subscribed to '. $this->ticket->jurisdiction->name, $view);
         $this->sendDahEmails();
     }
 

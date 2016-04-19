@@ -16,7 +16,10 @@ class MediaController extends Controller
         }
         $media = Photos::whereUuid($uuid)->first();
         if(empty($media) || $uuid === '159a50e6-5382-4a52-ae94-3f5a4e8f0584'){
-            return response()->make(file_get_contents(storage_path('app/media/159a50e6-5382-4a52-ae94-3f5a4e8f0584.jpeg')), 404)->header('Content-type','image/jpeg')->header('Content-length', filesize((storage_path('app/media/159a50e6-5382-4a52-ae94-3f5a4e8f0584.jpeg'))));
+            return response()
+                    ->make(file_get_contents(storage_path(config('kregel.dispatch.storage_path').'159a50e6-5382-4a52-ae94-3f5a4e8f0584.jpeg')), 404)
+                    ->header('Content-type','image/jpeg')
+                    ->header('Content-length', filesize((storage_path(config('kregel.dispatch.storage_path').'159a50e6-5382-4a52-ae94-3f5a4e8f0584.jpeg'))));
         }
         if(auth()->user()->jurisdiction->contains('id',$media->ticket->jurisdiction->id) || auth()->user()->hasRole('developer')){
             if ($media->type == 'doc')

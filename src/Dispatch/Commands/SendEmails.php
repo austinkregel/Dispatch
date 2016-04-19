@@ -177,9 +177,9 @@ class SendEmails extends Command implements SelfHandling
     private function newComment(){
         $view = config('kregel.dispatch.mail.template.new.comment');
 
-        $this->setOwner('New comment on your ticket in '. $this->ticket->jurisdiction->name,$view);
-        $this->setAssigned('New comment on a ticket you are assigned to '. $this->ticket->jurisdiction->name, $view);
-        $this->setCommented('New comment on a ticket you are subscribed to '. $this->ticket->jurisdiction->name, $view);
+        $this->setOwner('New comment on your ticket in - '. $this->ticket->jurisdiction->name,$view);
+        $this->setAssigned('New comment on a ticket you are assigned to - '. $this->ticket->jurisdiction->name, $view);
+        $this->setCommented('New comment on a ticket you are subscribed to - '. $this->ticket->jurisdiction->name, $view);
         $this->sendDahEmails();
     }
 
@@ -194,19 +194,19 @@ class SendEmails extends Command implements SelfHandling
     private function assignedATicket()
     {
         $view = config('kregel.dispatch.mail.template.assign.ticket');
-        $this->setOwner('Your ticket has been assigned', $view);
-        $this->setAssigned('A ticket you are assigned to has been reassigned',$view);
+        $this->setOwner('Your ticket has been assigned - '. $this->ticket->jurisdiction->name, $view);
+        $this->setAssigned('A ticket you are assigned to has been reassigned - '. $this->ticket->jurisdiction->name,$view);
 //        $this->oldAssigned('You have been removed from the ticket');
-        $this->setCommented('A ticket you are subscribed to has been reassigned', $view);
+        $this->setCommented('A ticket you are subscribed to has been reassigned - '. $this->ticket->jurisdiction->name, $view);
         $this->sendDahEmails();
     }
 
     private function updatedTicket()
     {
         $view = config('kregel.dispatch.mail.template.update.ticket');
-        $this->setOwner('Your ticket has been updated!', $view);
-        $this->setAssigned('A ticket you are assigned to has been updated', $view);
-        $this->setCommented('A ticket you are subscribed to has been updated', $view);
+        $this->setOwner('Your ticket has been updated - '. $this->ticket->jurisdiction->name, $view);
+        $this->setAssigned('A ticket you are assigned to has been updated - '. $this->ticket->jurisdiction->name, $view);
+        $this->setCommented('A ticket you are subscribed to has been updated - '. $this->ticket->jurisdiction->name, $view);
 //        $this->oldAssigned('You have been removed from the ticket');
         $this->sendDahEmails();
     }

@@ -153,6 +153,8 @@ class SendEmails extends Command implements SelfHandling
                 }, 'ticket-emails');
             } else {
                 $this->error("Mail not added to the queue! Mail pretend enabled!");
+                $this->info("Mail going to -- ". $user->email);
+
             }
         }
     }

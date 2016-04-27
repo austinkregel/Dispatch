@@ -19,7 +19,7 @@ class SendEmails extends Command implements SelfHandling
      *
      * @var string
      */
-    protected $signature = 'dispatch:send-mail {--ticket= : Ticket ID} {--type= : Valid types are [new, assigned, and updates]}';
+    protected $signature = 'dispatch:send-mail {--ticket= : Ticket ID} {--type= : Valid types are [new, assigned, and updates]} {--exclude=-1 : If you want to exclude any users.}';
 
     /*
      * Have a class wide instance of an array of users. make them unique so no one gets
@@ -136,6 +136,12 @@ class SendEmails extends Command implements SelfHandling
 
 
     private function sendDahEmails(){
+        if (!empty($this->option('exclude'))) {
+            $excluding = explode(',', $this->option('exclude'));
+            foreach ($excluding as $exclude) {
+                unset($this->messages[$exclude]);
+            }
+        }
         foreach($this->messages as $message_){
             list($subject, $view, $data) = ($message_);
             $user = $data['user'];

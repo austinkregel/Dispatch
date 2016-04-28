@@ -186,7 +186,13 @@ class TicketsController extends WController
         $this->validate($request, [
             'photo' => 'mimes:jpg,jpeg,png,pdf,gif'
         ]);
-
+        $ticket = auth()->user()->tickets()->find($id);
+        if(empty($ticket)){
+            return response()->json([
+                'message' => 'No ticket found with that id',
+                'code' => 404
+            ], 404);
+        }
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
             $ext = strtolower($file->getClientOriginalExtension());
@@ -210,7 +216,7 @@ class TicketsController extends WController
             Photos::create([
                 'path' => $file_path,
                 'uuid' => $uuid,
-                'ticket_id' => $id,
+                'ticket_id' => $ticket->id,
                 'user_id' => auth()->user()->id,
                 'type' => $type
             ]);

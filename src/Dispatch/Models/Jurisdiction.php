@@ -5,11 +5,12 @@ namespace Kregel\Dispatch\Models;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Kregel\Contractor\Models\Contractable;
 use Kregel\Warden\Traits\Wardenable;
 
 class Jurisdiction extends Model
 {
-    use Wardenable;
+    use Wardenable, Contractable;
     public static function boot()
     {
         parent::boot();

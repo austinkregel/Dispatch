@@ -133,8 +133,7 @@ class SendEmails extends Command implements SelfHandling
         }
 
     }
-
-
+    
     private function sendDahEmails(){
         if (!empty($this->option('exclude'))) {
             $excluding = explode(',', $this->option('exclude'));

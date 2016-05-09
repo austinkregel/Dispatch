@@ -112,6 +112,8 @@ class Ticket extends Model
 
     public function getDiff()
     {
+
+        unset($this['assign_to']);
         $changed = collect($this->getDirty());
         $before = collect($this->getOriginal())->diff($this)->toJson();
         $after =  $changed->toJson();
